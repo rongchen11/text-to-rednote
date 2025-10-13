@@ -35,7 +35,7 @@ const PURCHASE_OPTIONS = [
   },
   {
     id: 'unlimited_pack',
-    price: 15,
+    price: 599,
     credits: -1, // -1 表示无限积分
     label: 'Unlimited',
     popular: false,
