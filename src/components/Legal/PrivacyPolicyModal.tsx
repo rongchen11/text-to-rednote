@@ -13,7 +13,7 @@ export const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({
 }) => {
   return (
     <Modal
-      title="隐私政策"
+      title="Privacy Policy"
       open={visible}
       onCancel={onClose}
       footer={null}

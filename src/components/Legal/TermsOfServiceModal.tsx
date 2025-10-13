@@ -13,7 +13,7 @@ export const TermsOfServiceModal: React.FC<TermsOfServiceModalProps> = ({
 }) => {
   return (
     <Modal
-      title="服务条款"
+      title="Terms of Service"
       open={visible}
       onCancel={onClose}
       footer={null}
