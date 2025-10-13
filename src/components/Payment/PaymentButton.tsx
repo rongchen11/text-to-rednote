@@ -61,7 +61,7 @@ export const PaymentButton: React.FC<PaymentButtonProps> = ({
     try {
       // 检查用户登录状态
       if (!isAuthenticated || !user) {
-        message.error('请先登录后再进行支付');
+        message.error('Please log in to make a payment');
         return;
       }
 
@@ -132,9 +132,9 @@ export const PaymentButton: React.FC<PaymentButtonProps> = ({
         size={size}
         type="default"
         className={className}
-        onClick={() => message.warning('请先登录后再进行支付')}
+        onClick={() => message.warning('Please log in to make a payment')}
       >
-        请先登录
+        Please log in
       </Button>
     );
   }

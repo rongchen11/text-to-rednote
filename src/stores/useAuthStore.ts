@@ -121,7 +121,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     
     if (!user) {
       console.log('❌ Store deductCredits - 用户未登录');
-      message.error('请先登录');
+      message.error('Please log in');
       return false;
     }
 
@@ -150,7 +150,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   addCredits: async (amount: number) => {
     const { user } = get();
     if (!user) {
-      message.error('请先登录');
+      message.error('Please log in');
       return false;
     }
 
