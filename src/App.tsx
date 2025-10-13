@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ConfigProvider, message } from 'antd';
+import { ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 
 // Navigation Components

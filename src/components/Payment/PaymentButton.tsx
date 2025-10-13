@@ -9,7 +9,7 @@ interface PaymentButtonProps {
   productName: string;
   amount: number;
   credits: number;
-  paymentType?: 'wxpay' | 'alipay'; // 支付方式：微信支付或支付宝
+  paymentType?: 'wxpay' | 'alipay' | 'card'; // 支付方式：微信支付、支付宝或信用卡
   subscriptionType?: 'monthly' | 'quarterly' | 'yearly';
   className?: string;
   size?: 'small' | 'middle' | 'large';

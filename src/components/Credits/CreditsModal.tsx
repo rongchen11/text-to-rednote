@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Modal, Card, Typography, message, Button } from 'antd';
 import { CrownOutlined, WalletOutlined } from '@ant-design/icons';
 import { useAuthStore } from '../../stores/useAuthStore';
@@ -71,7 +71,7 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({
   };
 
   // 处理免费套餐的逻辑
-  const handleFreePackage = async (option: typeof PURCHASE_OPTIONS[0]) => {
+  const handleFreePackage = async () => {
     try {
       setLoading('free');
       message.info('Processing free credits...');
@@ -170,7 +170,7 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({
               type="primary"
               size="large"
               className="w-full bg-green-600 hover:bg-green-700 border-green-600"
-              onClick={() => handleFreePackage(option)}
+              onClick={() => handleFreePackage()}
               loading={loading === 'free'}
               disabled={!!loading}
             >
