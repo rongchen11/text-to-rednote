@@ -1,6 +1,6 @@
 // 支付渠道检测服务
 export interface PaymentChannel {
-  type: 'wxpay' | 'alipay';
+  type: 'wxpay' | 'alipay' | 'card';
   name: string;
   icon: string;
   enabled: boolean;
@@ -29,7 +29,7 @@ export class PaymentChannelService {
   }
 
   // 获取推荐的支付方式
-  static getRecommendedPaymentType(): 'wxpay' | 'alipay' {
+  static getRecommendedPaymentType(): 'wxpay' | 'alipay' | 'card' {
     const channels = this.getAvailableChannels();
     // 优先推荐微信支付，如果可用的话
     const wxpayChannel = channels.find(channel => channel.type === 'wxpay' && channel.enabled);
@@ -38,18 +38,18 @@ export class PaymentChannelService {
     }
     // 否则选择第一个可用的渠道
     const enabledChannel = channels.find(channel => channel.enabled);
-    return enabledChannel?.type || 'alipay';
+    return (enabledChannel?.type as 'wxpay' | 'alipay') || 'alipay';
   }
 
   // 检查支付方式是否可用
-  static isPaymentTypeAvailable(type: 'wxpay' | 'alipay'): boolean {
+  static isPaymentTypeAvailable(type: 'wxpay' | 'alipay' | 'card'): boolean {
     const channels = this.getAvailableChannels();
     const channel = channels.find(c => c.type === type);
     return channel?.enabled || false;
   }
 
   // 获取支付方式的错误提示
-  static getPaymentTypeError(type: 'wxpay' | 'alipay'): string | null {
+  static getPaymentTypeError(type: 'wxpay' | 'alipay' | 'card'): string | null {
     const channels = this.getAvailableChannels();
     const channel = channels.find(c => c.type === type);
     
@@ -59,6 +59,9 @@ export class PaymentChannelService {
       }
       if (type === 'alipay') {
         return '商户尚未开通支付宝渠道，请联系管理员开通';
+      }
+      if (type === 'card') {
+        return '信用卡支付渠道暂未开通，请选择其他支付方式';
       }
     }
     

@@ -3,7 +3,7 @@ export interface PaymentRequest {
   product_name: string;
   amount: number;
   credits: number;
-  payment_type?: 'wxpay' | 'alipay';
+  payment_type?: 'wxpay' | 'alipay' | 'card';
 }
 
 export interface PaymentResponse {
