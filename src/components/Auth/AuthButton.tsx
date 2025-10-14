@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Button, Popover } from 'antd';
-import { LoginOutlined, WarningOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
+import { LoginOutlined } from '@ant-design/icons';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { LoginModal } from './LoginModal';
 import { UserProfile } from './UserProfile';
-import { ConfigStatus } from './ConfigStatus';
 
 interface AuthButtonProps {
   onOpenSettings?: () => void;
@@ -14,12 +13,7 @@ export const AuthButton: React.FC<AuthButtonProps> = ({ onOpenSettings }) => {
   const { user, isAuthenticated } = useAuthStore();
   const [showLoginModal, setShowLoginModal] = useState(false);
   
-  // Check Supabase configuration status
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-  const isConfigured = supabaseUrl && supabaseAnonKey && 
-    !supabaseUrl.includes('your-project-id') && 
-    !supabaseAnonKey.includes('your-anon-key');
+  // Supabase configuration check removed for demo mode
 
   // If authenticated, show user profile
    if (isAuthenticated && user) {
