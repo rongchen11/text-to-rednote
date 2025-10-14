@@ -22,14 +22,24 @@ export const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
   // Handle login
   const handleLogin = async () => {
     try {
+      console.log('🚀 Login button clicked - starting login process');
       const values = await loginForm.validateFields();
+      console.log('✅ Login form validation passed:', values);
+      
       const success = await signIn(values as SignInData);
+      console.log('📊 Login result:', success);
+      
       if (success) {
+        console.log('✅ Login successful - closing modal');
         onClose();
         loginForm.resetFields();
+      } else {
+        console.log('❌ Login failed - staying on form');
+        // Error message will be shown by the store via message.error()
       }
     } catch (error) {
-      console.error('Login form validation failed:', error);
+      console.error('❌ Login form validation failed:', error);
+      alert('Form validation failed: ' + error);
     }
   };
 
@@ -117,7 +127,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
             <Form.Item
               name="password"
               rules={[
-                { required: true, message: '请输入密码' }
+                { required: true, message: 'Please enter password' }
               ]}
             >
               <Input.Password

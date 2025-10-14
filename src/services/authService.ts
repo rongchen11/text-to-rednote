@@ -14,11 +14,35 @@ export class AuthService {
   // 用户注册
   async signUp(data: SignUpData): Promise<{ success: boolean; user?: AuthUser; error?: string }> {
     
-    // Check configuration first
+    // Demo mode: provide mock signup functionality when Supabase is not configured
     if (!this.isSupabaseConfigured()) {
+      console.log('🎭 Demo mode signup for:', data.username);
+      
+      // Basic validation (same as real version)
+      if (data.password !== data.confirmPassword) {
+        return { success: false, error: 'Password confirmation does not match' };
+      }
+      
+      if (data.password.length < 6) {
+        return { success: false, error: 'Password must be at least 6 characters long' };
+      }
+      
+      if (data.username.length < 2) {
+        return { success: false, error: 'Username must be at least 2 characters long' };
+      }
+      
+      // Create mock user for demo with bonus credits
+      const mockUser: AuthUser = {
+        id: `demo-${data.username}`,
+        email: `${data.username}@demo.app`,
+        username: data.username,
+        credits: 100 // New users get 100 credits as advertised
+      };
+      
+      console.log('✅ Demo signup successful for:', mockUser);
       return { 
-        success: false, 
-        error: 'Authentication service is not configured. This is a demo version. Please configure Supabase to enable user registration.' 
+        success: true, 
+        user: mockUser
       };
     }
     
@@ -35,7 +59,7 @@ export class AuthService {
 
       // 验证用户名
       if (data.username.length < 2) {
-        return { success: false, error: '用户名长度至少2位' };
+        return { success: false, error: 'Username must be at least 2 characters long' };
       }
 
       // 检查用户名是否已存在
@@ -46,7 +70,7 @@ export class AuthService {
         .single();
 
       if (existingUser) {
-        return { success: false, error: '用户名已存在' };
+        return { success: false, error: 'Username already exists' };
       }
 
       // 使用用户名作为邮箱（Supabase需要邮箱格式）
@@ -70,7 +94,7 @@ export class AuthService {
       }
 
       if (!authData.user) {
-        return { success: false, error: '注册失败，请重试' };
+        return { success: false, error: 'Registration failed, please try again' };
       }
 
       // 创建用户档案并赠送100积分
@@ -88,7 +112,7 @@ export class AuthService {
         console.error('Profile creation error:', profileError);
         // 如果档案创建失败，删除已创建的用户
         await supabase.auth.admin.deleteUser(authData.user.id);
-        return { success: false, error: '用户档案创建失败' };
+        return { success: false, error: 'Failed to create user profile' };
       }
 
       // 返回用户信息
@@ -102,18 +126,37 @@ export class AuthService {
       return { success: true, user };
     } catch (error) {
       console.error('Signup error:', error);
-      return { success: false, error: '注册过程中发生错误' };
+      return { success: false, error: 'Error occurred during registration' };
     }
   }
 
   // 用户登录
   async signIn(data: SignInData): Promise<{ success: boolean; user?: AuthUser; error?: string }> {
     
-    // Check configuration first
+    // Demo mode: provide mock login functionality when Supabase is not configured
     if (!this.isSupabaseConfigured()) {
+      console.log('🎭 Demo mode login for:', data.username);
+      
+      // Basic validation
+      if (data.password.length < 3) {
+        return { 
+          success: false, 
+          error: 'Password must be at least 3 characters long' 
+        };
+      }
+      
+      // Create mock user for demo
+      const mockUser: AuthUser = {
+        id: `demo-${data.username}`,
+        email: `${data.username}@demo.app`,
+        username: data.username,
+        credits: 1000 // Give demo users plenty of credits
+      };
+      
+      console.log('✅ Demo login successful for:', mockUser);
       return { 
-        success: false, 
-        error: 'Authentication service is not configured. This is a demo version. Please configure Supabase to enable user login.' 
+        success: true, 
+        user: mockUser
       };
     }
     
@@ -129,11 +172,11 @@ export class AuthService {
 
       if (authError) {
         console.error('Auth signin error:', authError);
-        return { success: false, error: '用户名或密码错误' };
+        return { success: false, error: 'Invalid username or password' };
       }
 
       if (!authData.user) {
-        return { success: false, error: '登录失败，请重试' };
+        return { success: false, error: 'Login failed, please try again' };
       }
 
       // 获取用户档案信息
@@ -145,7 +188,7 @@ export class AuthService {
 
       if (profileError || !profile) {
         console.error('Profile fetch error:', profileError);
-        return { success: false, error: '获取用户信息失败' };
+        return { success: false, error: 'Failed to fetch user information' };
       }
 
       // 返回用户信息
@@ -159,12 +202,19 @@ export class AuthService {
       return { success: true, user };
     } catch (error) {
       console.error('Signin error:', error);
-      return { success: false, error: '登录过程中发生错误' };
+      return { success: false, error: 'Error occurred during login' };
     }
   }
 
   // 用户登出
   async signOut(): Promise<{ success: boolean; error?: string }> {
+    
+    // Demo mode: always successful logout
+    if (!this.isSupabaseConfigured()) {
+      console.log('🎭 Demo mode logout - always successful');
+      return { success: true };
+    }
+    
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
