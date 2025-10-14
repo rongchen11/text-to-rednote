@@ -57,10 +57,10 @@ export const EditablePreviewCard: React.FC<EditablePreviewCardProps> = ({
       <div className="p-3 border border-blue-400 rounded-md bg-blue-50">
         <div className="flex items-start justify-between mb-2">
           <Tag color={isCover ? 'red' : 'blue'}>
-            {isCover ? '📌 封面' : `📄 内容${result.index}`}
+            {isCover ? '📌 Cover' : `📄 Content ${result.index}`}
           </Tag>
           <span className="text-xs text-gray-600">
-            {charCount}字
+            {charCount} chars
           </span>
         </div>
         
@@ -99,7 +99,7 @@ export const EditablePreviewCard: React.FC<EditablePreviewCardProps> = ({
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2">
           <Tag color={isCover ? 'red' : 'blue'}>
-            {isCover ? '📌 封面' : `📄 内容${result.index}`}
+            {isCover ? '📌 Cover' : `📄 Content ${result.index}`}
           </Tag>
           <Button
             size="small"
@@ -107,10 +107,10 @@ export const EditablePreviewCard: React.FC<EditablePreviewCardProps> = ({
             icon={<EditOutlined />}
             onClick={handleEdit}
           >
-            编辑
+            Edit
           </Button>
         </div>
-        <span className="text-xs text-gray-500">{result.charCount}字</span>
+        <span className="text-xs text-gray-500">{result.charCount} chars</span>
       </div>
       <div className="text-sm text-gray-700 line-clamp-3">
         {result.text}

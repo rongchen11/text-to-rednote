@@ -3,6 +3,7 @@ import { Modal, Card, Typography, message, Button } from 'antd';
 import { CrownOutlined, WalletOutlined } from '@ant-design/icons';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { PaymentButton } from '../Payment';
+import { LoginModal } from '../Auth/LoginModal';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -49,18 +50,19 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({
   visible,
   onClose,
 }) => {
-  const { user, isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated, addCredits, setUser } = useAuthStore();
   const [loading, setLoading] = useState<string | null>(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   // 支付相关处理
   const handlePaymentStart = () => {
     setLoading('payment');
-    message.info('正在跳转到支付页面...');
+    message.info('Redirecting to payment page...');
   };
 
   const handlePaymentSuccess = (orderInfo: any) => {
     console.log('支付成功:', orderInfo);
-    message.success('支付链接生成成功，即将跳转到支付页面');
+    message.success('Payment link generated successfully, redirecting to payment page');
     setLoading(null);
   };
 
@@ -72,16 +74,41 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({
 
   // 处理免费套餐的逻辑
   const handleFreePackage = async () => {
+    // 如果用户未登录，显示登录Modal
+    if (!isAuthenticated || !user) {
+      setShowLoginModal(true);
+      return;
+    }
+
+    // 如果用户已经获得过免费积分，不能再次获得
+    if (user.hasReceivedFreeCredits) {
+      message.info('You have already received your free credits!');
+      return;
+    }
+
     try {
       setLoading('free');
       message.info('Processing free credits...');
       
-      // TODO: 实现免费积分发放逻辑
-      // 可以调用后端API直接给用户账户添加积分
+      // 给用户添加100积分
+      const success = await addCredits(100);
       
-      message.success('Free credits added to your account!');
+      if (success) {
+        // 更新用户状态，标记已获得免费积分
+        if (user) {
+          setUser({ 
+            ...user, 
+            credits: user.credits + 100,
+            hasReceivedFreeCredits: true 
+          });
+        }
+        message.success('Congratulations! 100 free credits added to your account!');
+        onClose(); // 关闭模态框
+      } else {
+        message.error('Failed to add free credits. Please try again.');
+      }
+      
       setLoading(null);
-      onClose(); // 关闭模态框
     } catch (error) {
       console.error('Free package error:', error);
       message.error('Failed to add free credits. Please try again.');
@@ -169,12 +196,19 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({
             <Button
               type="primary"
               size="large"
-              className="w-full bg-green-600 hover:bg-green-700 border-green-600"
+              className={`w-full ${
+                isAuthenticated && user?.hasReceivedFreeCredits 
+                  ? 'bg-gray-400 hover:bg-gray-400 border-gray-400 cursor-not-allowed'
+                  : 'bg-green-600 hover:bg-green-700 border-green-600'
+              }`}
               onClick={() => handleFreePackage()}
               loading={loading === 'free'}
-              disabled={!!loading}
+              disabled={!!loading || (isAuthenticated && user?.hasReceivedFreeCredits)}
             >
-              Get Free Credits
+              {isAuthenticated && user?.hasReceivedFreeCredits 
+                ? '✅ Already Received' 
+                : 'Get Free Credits'
+              }
             </Button>
           ) : (
             <PaymentButton
@@ -197,6 +231,7 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({
   };
 
   return (
+    <>
     <Modal
       title={
         <div className="flex items-center">
@@ -304,5 +339,12 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({
         </div>
       </div>
     </Modal>
+
+    {/* 登录Modal */}
+    <LoginModal
+      visible={showLoginModal}
+      onClose={() => setShowLoginModal(false)}
+    />
+  </>
   );
 };

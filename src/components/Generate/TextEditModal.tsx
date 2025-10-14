@@ -46,7 +46,7 @@ export const TextEditModal: React.FC<TextEditModalProps> = ({
 
   if (!splitResult) return null;
 
-  const typeLabel = splitResult.type === 'cover' ? '封面' : `内容${splitResult.index}`;
+  const typeLabel = splitResult.type === 'cover' ? 'Cover' : `Content ${splitResult.index}`;
   const maxLength = splitResult.type === 'cover' ? 200 : 500;
   
   // 根据当前图片状态判断是否正在生成
@@ -57,7 +57,7 @@ export const TextEditModal: React.FC<TextEditModalProps> = ({
       title={
         <Space>
           <EditOutlined />
-          <span>编辑文本内容</span>
+          <span>Edit Text Content</span>
         </Space>
       }
       open={visible}
@@ -75,7 +75,7 @@ export const TextEditModal: React.FC<TextEditModalProps> = ({
           loading={isGenerating}
           disabled={!editedText.trim() || charCount > maxLength || isGenerating}
         >
-          {isGenerating ? '正在生成中...' : '保存并重新生成图片'}
+          {isGenerating ? 'Generating...' : 'Save and Regenerate Image'}
         </Button>,
       ]}
     >
@@ -98,7 +98,7 @@ export const TextEditModal: React.FC<TextEditModalProps> = ({
 
         <div className="flex justify-between items-center">
           <Space>
-            <Text>字数：</Text>
+            <Text>Characters:</Text>
             <Text type={charCount > maxLength ? 'danger' : undefined}>
               {charCount}/{maxLength}
             </Text>
@@ -112,7 +112,7 @@ export const TextEditModal: React.FC<TextEditModalProps> = ({
 
         <div className="bg-gray-50 p-3 rounded">
           <Text type="secondary" className="text-xs">
-            提示：编辑后将使用原始模板重新生成该图片，其他图片不受影响。
+            Note: After editing, the image will be regenerated using the original template. Other images will not be affected.
           </Text>
         </div>
       </Space>

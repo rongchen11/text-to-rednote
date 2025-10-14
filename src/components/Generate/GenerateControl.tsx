@@ -27,8 +27,8 @@ export const GenerateControl: React.FC<GenerateControlProps> = ({
         block
       >
         {isGenerating 
-          ? '正在生成图片...' 
-          : `立即生成所有图片 (共${imageCount}张)`}
+          ? 'Generating images...' 
+          : `Generate All Images (${imageCount} total)`}
       </Button>
     </div>
   );

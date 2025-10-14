@@ -17,7 +17,7 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Left: copyright and legal links */}
           <div className="flex items-center gap-4">
             <div className="text-sm text-gray-500">
-              © 2025 • Text to RedNote • All rights reserved.
+              © 2025 • RedNote Writer • All rights reserved.
             </div>
             <div className="flex items-center gap-3 text-sm">
               <button
@@ -48,7 +48,7 @@ export const Footer: React.FC<FooterProps> = ({
         {/* Mobile layout - vertical centered */}
         <div className="sm:hidden flex flex-col items-center gap-2 text-center">
           <div className="text-sm text-gray-500">
-            © 2025 • Text to RedNote • All rights reserved.
+            © 2025 • RedNote Writer • All rights reserved.
           </div>
           
           {/* Mobile legal links */}

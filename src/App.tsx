@@ -127,11 +127,17 @@ function App() {
   const handleSaveSettings = (settings: {
     imageSize: string;
     watermarkEnabled: boolean;
+    doubaoApiKey?: string;
   }) => {
     setImageSize(settings.imageSize);
     setWatermarkEnabled(settings.watermarkEnabled);
     doubaoAPI.setImageSize(settings.imageSize);
     doubaoAPI.setWatermarkEnabled(settings.watermarkEnabled);
+    
+    // 如果保存了API密钥，重新加载
+    if (settings.doubaoApiKey !== undefined) {
+      doubaoAPI.reloadApiKey();
+    }
   };
 
 
@@ -157,7 +163,7 @@ function App() {
         {/* Header */}
         <div className="bg-white shadow-sm px-6 py-3 flex justify-between items-center">
           <div className="text-xl font-semibold">
-            🌸 Text to RedNote
+            🌸 RedNote Writer
           </div>
           <div className="flex items-center space-x-3">
             {/* User credits display and entry */}

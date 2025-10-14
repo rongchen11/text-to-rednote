@@ -18,12 +18,12 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
 }) => {
   return (
     <div className="p-4 bg-white rounded-lg shadow-sm">
-      <div className="mb-3 font-medium text-gray-700">模板选择:</div>
+      <div className="mb-3 font-medium text-gray-700">Template Selection:</div>
       {templates.length === 0 ? (
         <Empty
           description={
             <span className="text-gray-500">
-              暂无模板，请点击下方按钮创建自定义模板
+              No templates available, click the button below to create a custom template
             </span>
           }
           imageStyle={{ height: 60 }}
@@ -33,7 +33,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
             icon={<PlusOutlined />}
             onClick={onAddCustom}
           >
-            创建自定义模板
+            Create Custom Template
           </Button>
         </Empty>
       ) : (
@@ -50,7 +50,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
               size="small"
               onClick={onAddCustom}
             >
-              自定义
+              Custom
             </Button>
           </Space>
         </Radio.Group>

@@ -4,213 +4,113 @@ export class AuthService {
   
   // Check if Supabase is configured
   private isSupabaseConfigured(): boolean {
+    // 🎭 强制演示模式：永远返回false以确保使用localStorage模拟
+    console.log('🎭 FORCE DEMO MODE: Always using localStorage simulation');
+    return false;
+    
+    /* 原来的检测逻辑，暂时禁用
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    return supabaseUrl && supabaseAnonKey && 
+    
+    console.log('🔍 Supabase configuration check:', {
+      supabaseUrl: supabaseUrl ? 'Present' : 'Missing',
+      supabaseAnonKey: supabaseAnonKey ? 'Present' : 'Missing',
+      urlContent: supabaseUrl,
+      keyContent: supabaseAnonKey ? `${supabaseAnonKey.substring(0, 10)}...` : 'None'
+    });
+    
+    const isConfigured = supabaseUrl && supabaseAnonKey && 
       !supabaseUrl.includes('your-project-id') && 
-      !supabaseAnonKey.includes('your-anon-key');
+      !supabaseAnonKey.includes('your-anon-key') &&
+      supabaseUrl.startsWith('https://') &&
+      supabaseUrl.includes('.supabase.co');
+    
+    console.log('🎭 Supabase configured?', isConfigured ? 'YES - Real mode' : 'NO - Demo mode');
+    return isConfigured;
+    */
   }
 
   // 用户注册
   async signUp(data: SignUpData): Promise<{ success: boolean; user?: AuthUser; error?: string }> {
     
-    // Demo mode: provide mock signup functionality when Supabase is not configured
-    if (!this.isSupabaseConfigured()) {
-      console.log('🎭 Demo mode signup for:', data.email);
-      
-      // Basic validation (same as real version)
-      if (data.password !== data.confirmPassword) {
-        return { success: false, error: 'Password confirmation does not match' };
-      }
-      
-      if (data.password.length < 6) {
-        return { success: false, error: 'Password must be at least 6 characters long' };
-      }
-      
-      // Email validation
-      if (!data.email || !data.email.includes('@')) {
-        return { success: false, error: 'Please enter a valid email address' };
-      }
-      
-      // Generate username from email if not provided
-      const displayName = data.username || data.email.split('@')[0];
-      
-      // Create mock user for demo with bonus credits
-      const mockUser: AuthUser = {
-        id: `demo-${Date.now()}`,
-        email: data.email,
-        username: displayName,
-        credits: 100 // New users get 100 credits as advertised
-      };
-      
-      console.log('✅ Demo signup successful for:', mockUser);
-      return { 
-        success: true, 
-        user: mockUser
-      };
+    // 简化演示模式
+    console.log('🎭 Simple signup for:', data.username);
+    
+    // 基本验证
+    if (data.password !== data.confirmPassword) {
+      return { success: false, error: 'Password confirmation does not match' };
     }
     
-    try {
-      // 验证密码确认
-      if (data.password !== data.confirmPassword) {
-        return { success: false, error: 'Password confirmation does not match' };
-      }
-
-      // 验证密码强度
-      if (data.password.length < 6) {
-        return { success: false, error: 'Password must be at least 6 characters long' };
-      }
-
-      // 验证邮箱
-      if (!data.email || !data.email.includes('@')) {
-        return { success: false, error: 'Please enter a valid email address' };
-      }
-
-      // 检查邮箱是否已存在
-      const { data: existingUser } = await supabase.auth.getUser();
-      
-      // Generate username from email if not provided
-      const displayName = data.username || data.email.split('@')[0];
-
-      // 创建用户账户
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          data: {
-            username: displayName,
-            full_name: displayName
-          },
-          emailRedirectTo: undefined // 禁用邮箱确认重定向
-        }
-      });
-
-      if (authError) {
-        console.error('Auth signup error:', authError);
-        return { success: false, error: authError.message };
-      }
-
-      if (!authData.user) {
-        return { success: false, error: 'Registration failed, please try again' };
-      }
-
-      // 创建用户档案并赠送100积分
-      const { error: profileError } = await supabase
-        .from('user_profiles')
-        .insert({
-          id: authData.user.id,
-          username: displayName,
-          credits: 100, // 首次注册赠送100积分
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        });
-
-      if (profileError) {
-        console.error('Profile creation error:', profileError);
-        // 如果档案创建失败，删除已创建的用户
-        await supabase.auth.admin.deleteUser(authData.user.id);
-        return { success: false, error: 'Failed to create user profile' };
-      }
-
-      // 返回用户信息
-      const user: AuthUser = {
-        id: authData.user.id,
-        email: authData.user.email,
-        username: displayName,
-        credits: 100
-      };
-
-      return { success: true, user };
-    } catch (error) {
-      console.error('Signup error:', error);
-      return { success: false, error: 'Error occurred during registration' };
+    if (data.password.length < 6) {
+      return { success: false, error: 'Password must be at least 6 characters long' };
     }
+    
+    // 用户名验证
+    if (!data.username || data.username.length < 3) {
+      return { success: false, error: 'Username must be at least 3 characters long' };
+    }
+    
+    // 创建简单用户
+    const mockUser: AuthUser = {
+      id: `user-${Date.now()}`,
+      email: `${data.username}@demo.com`,
+      username: data.username,
+      credits: 100, // 新用户获得100积分
+      hasReceivedFreeCredits: true // 注册时已获得免费积分
+    };
+    
+    console.log('✅ Registration successful for:', mockUser);
+    return { 
+      success: true, 
+      user: mockUser
+    };
   }
 
   // 用户登录
   async signIn(data: SignInData): Promise<{ success: boolean; user?: AuthUser; error?: string }> {
     
-    // Demo mode: provide mock login functionality when Supabase is not configured
-    if (!this.isSupabaseConfigured()) {
-      console.log('🎭 Demo mode login for:', data.email);
-      
-      // Basic validation
-      if (data.password.length < 3) {
-        return { 
-          success: false, 
-          error: 'Password must be at least 3 characters long' 
-        };
-      }
-      
-      // Email validation
-      if (!data.email || !data.email.includes('@')) {
-        return { 
-          success: false, 
-          error: 'Please enter a valid email address' 
-        };
-      }
-      
-      // Create mock user for demo
-      const mockUser: AuthUser = {
-        id: `demo-${Date.now()}`,
-        email: data.email,
-        username: data.email.split('@')[0],
-        credits: 1000 // Give demo users plenty of credits
-      };
-      
-      console.log('✅ Demo login successful for:', mockUser);
+    // 简化演示模式登录  
+    console.log('🎭 Simple login for:', data.username);
+    
+    // 基本验证
+    if (data.password.length < 3) {
       return { 
-        success: true, 
-        user: mockUser
+        success: false, 
+        error: 'Password must be at least 3 characters long' 
       };
     }
     
-    try {
-      // 直接使用提供的邮箱地址
-      if (!data.email || !data.email.includes('@')) {
-        return { success: false, error: 'Please enter a valid email address' };
-      }
-
-      // 登录验证
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: data.email,
-        password: data.password
-      });
-
-      if (authError) {
-        console.error('Auth signin error:', authError);
-        return { success: false, error: 'Invalid username or password' };
-      }
-
-      if (!authData.user) {
-        return { success: false, error: 'Login failed, please try again' };
-      }
-
-      // 获取用户档案信息
-      const { data: profile, error: profileError } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('id', authData.user.id)
-        .single();
-
-      if (profileError || !profile) {
-        console.error('Profile fetch error:', profileError);
-        return { success: false, error: 'Failed to fetch user information' };
-      }
-
-      // 返回用户信息
-      const user: AuthUser = {
-        id: authData.user.id,
-        email: authData.user.email,
-        username: profile.username,
-        credits: profile.credits
+    // 用户名验证
+    if (!data.username || data.username.length < 3) {
+      return { 
+        success: false, 
+        error: 'Username must be at least 3 characters long' 
       };
-
-      return { success: true, user };
-    } catch (error) {
-      console.error('Signin error:', error);
-      return { success: false, error: 'Error occurred during login' };
     }
+    
+    // 模拟检查用户是否首次登录（演示模式）
+    // 在真实环境中，这里会查询数据库
+    const isFirstTimeLogin = !localStorage.getItem(`user_${data.username}_visited`);
+    
+    // 创建简单登录用户
+    const mockUser: AuthUser = {
+      id: `user-${Date.now()}`,
+      email: `${data.username}@demo.com`,
+      username: data.username,
+      credits: isFirstTimeLogin ? 100 : 0, // 首次登录100积分，否则0积分
+      hasReceivedFreeCredits: isFirstTimeLogin // 首次登录时获得免费积分
+    };
+    
+    // 标记用户已经访问过
+    if (isFirstTimeLogin) {
+      localStorage.setItem(`user_${data.username}_visited`, 'true');
+    }
+    
+    console.log('✅ Login successful for:', mockUser);
+    return { 
+      success: true, 
+      user: mockUser
+    };
   }
 
   // 用户登出
@@ -309,9 +209,38 @@ export class AuthService {
   async deductCredits(userId: string, amount: number): Promise<{ success: boolean; newCredits?: number; error?: string }> {
     console.log('🔍 AuthService deductCredits - 开始扣除积分:', { userId, amount });
     
+    // 检查是否配置了 Supabase
+    if (!this.isSupabaseConfigured()) {
+      console.log('🎭 AuthService deductCredits - 演示模式，模拟积分扣除');
+      
+      // 演示模式：从 localStorage 模拟积分管理
+      try {
+        const userKey = `demo_user_${userId}`;
+        let userData = JSON.parse(localStorage.getItem(userKey) || '{}');
+        
+        const currentCredits = userData.credits || 100; // 默认100积分
+        console.log('💰 演示模式 - 当前积分:', currentCredits);
+        
+        if (currentCredits < amount) {
+          console.log('❌ 演示模式 - 积分不足:', { current: currentCredits, required: amount });
+          return { success: false, error: '积分不足' };
+        }
+        
+        const newCredits = currentCredits - amount;
+        userData.credits = newCredits;
+        localStorage.setItem(userKey, JSON.stringify(userData));
+        
+        console.log('✅ 演示模式 - 积分扣除成功:', { newCredits });
+        return { success: true, newCredits };
+      } catch (error) {
+        console.error('❌ 演示模式积分扣除失败:', error);
+        return { success: false, error: '演示模式积分扣除失败' };
+      }
+    }
+    
     try {
-      // 暂时跳过会话检查，直接尝试查询
-      console.log('⏭️ AuthService deductCredits - 跳过会话检查，直接查询');
+      // 真实 Supabase 模式
+      console.log('🔍 AuthService deductCredits - Supabase 模式，查询数据库');
       
       // 先获取当前积分
       console.log('📋 AuthService deductCredits - 查询用户积分');
@@ -384,7 +313,36 @@ export class AuthService {
 
   // 增加积分
   async addCredits(userId: string, amount: number): Promise<{ success: boolean; newCredits?: number; error?: string }> {
+    console.log('🔍 AuthService addCredits - 开始增加积分:', { userId, amount });
+    
+    // 检查是否配置了 Supabase
+    if (!this.isSupabaseConfigured()) {
+      console.log('🎭 AuthService addCredits - 演示模式，模拟积分增加');
+      
+      // 演示模式：从 localStorage 模拟积分管理
+      try {
+        const userKey = `demo_user_${userId}`;
+        let userData = JSON.parse(localStorage.getItem(userKey) || '{}');
+        
+        const currentCredits = userData.credits || 100; // 默认100积分
+        console.log('💰 演示模式 - 当前积分:', currentCredits);
+        
+        const newCredits = currentCredits + amount;
+        userData.credits = newCredits;
+        localStorage.setItem(userKey, JSON.stringify(userData));
+        
+        console.log('✅ 演示模式 - 积分增加成功:', { newCredits });
+        return { success: true, newCredits };
+      } catch (error) {
+        console.error('❌ 演示模式积分增加失败:', error);
+        return { success: false, error: '演示模式积分增加失败' };
+      }
+    }
+    
     try {
+      // 真实 Supabase 模式
+      console.log('🔍 AuthService addCredits - Supabase 模式，查询数据库');
+      
       // 先获取当前积分
       const { data: profile, error: fetchError } = await supabase
         .from('user_profiles')

@@ -107,6 +107,73 @@ app.post('/api/payment/zpay-url-simple', (req, res) => {
   }
 });
 
+// 图片生成接口
+app.post('/api/images', async (req, res) => {
+  console.log('🖼️  收到图片生成请求:', req.body);
+  
+  try {
+    // 获取API密钥
+    const apiKey = req.headers['x-api-key'];
+    
+    if (!apiKey) {
+      return res.status(401).json({ 
+        error: '需要API密钥',
+        message: '图片生成功能需要您提供豆包API密钥。AI拆分功能仍可免费使用。',
+        type: 'API_KEY_REQUIRED',
+        guide: '请在设置中配置您的豆包API密钥，或查看API密钥申请教程'
+      });
+    }
+    
+    console.log('🔑 使用API密钥:', apiKey.substring(0, 10) + '...');
+    
+    // 构建请求到豆包图片生成 API
+    const response = await fetch('https://ark.cn-beijing.volces.com/api/v3/images/generations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify(req.body)
+    });
+    
+    console.log('📡 豆包API响应状态:', response.status);
+    
+    // 获取响应数据
+    const data = await response.json();
+    console.log('📦 豆包API响应数据:', data);
+    
+    // 检查响应状态
+    if (!response.ok) {
+      console.error('❌ 豆包图片API错误:', data);
+      
+      // 处理特定错误码
+      if (response.status === 401) {
+        return res.status(401).json({ 
+          error: 'API密钥无效或已过期',
+          originalError: data 
+        });
+      } else if (response.status === 429) {
+        return res.status(429).json({ 
+          error: '请求过于频繁，请稍后再试',
+          originalError: data 
+        });
+      }
+      
+      return res.status(response.status).json(data);
+    }
+    
+    console.log('✅ 图片生成成功');
+    // 返回成功响应
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('❌ 图片生成代理错误:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      message: error.message 
+    });
+  }
+});
+
 // 测试接口
 app.post('/api/test-payment', (req, res) => {
   console.log('收到测试请求:', req.body);
@@ -119,6 +186,7 @@ app.post('/api/test-payment', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`本地API服务器运行在 http://localhost:${PORT}`);
-  console.log('支付API端点: http://localhost:3001/api/payment/zpay-url-simple');
+  console.log(`🚀 本地API服务器运行在 http://localhost:${PORT}`);
+  console.log('💳 支付API端点: http://localhost:3001/api/payment/zpay-url-simple');
+  console.log('🖼️  图片API端点: http://localhost:3001/api/images');
 });

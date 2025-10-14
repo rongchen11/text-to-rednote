@@ -13,9 +13,9 @@ export const PreviewCard: React.FC<PreviewCardProps> = ({ result }) => {
     <div className="p-3 border border-gray-200 rounded-md hover:border-blue-400 transition-colors">
       <div className="flex items-start justify-between mb-2">
         <Tag color={isCover ? 'red' : 'blue'}>
-          {isCover ? '📌 封面' : `📄 内容${result.index}`}
+          {isCover ? '📌 Cover' : `📄 Content ${result.index}`}
         </Tag>
-        <span className="text-xs text-gray-500">{result.charCount}字</span>
+        <span className="text-xs text-gray-500">{result.charCount} chars</span>
       </div>
       <div className="text-sm text-gray-700 line-clamp-3">
         {result.text}

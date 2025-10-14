@@ -68,7 +68,7 @@ export const DownloadStep: React.FC = () => {
     );
     
     if (imagesToDownload.length === 0) {
-      message.warning('请选择要下载的图片');
+      message.warning('Please select images to download');
       return;
     }
     
@@ -78,9 +78,9 @@ export const DownloadStep: React.FC = () => {
         imagesToDownload,
         `xiaohongshu_${Date.now()}.zip`
       );
-      message.success('下载成功');
+      message.success('Download successful');
     } catch (error: any) {
-      message.error('下载失败：' + error.message);
+      message.error('Download failed: ' + error.message);
     } finally {
       setDownloading(false);
     }
@@ -88,7 +88,7 @@ export const DownloadStep: React.FC = () => {
   
   const handleDownloadSingle = async (image: GeneratedImage) => {
     if (image.status !== 'success' || !image.url) {
-      message.error('图片未生成成功');
+      message.error('Image generation not completed');
       return;
     }
     
@@ -97,18 +97,18 @@ export const DownloadStep: React.FC = () => {
         image.url,
         `${image.type}_${image.index}.png`
       );
-      message.success('下载成功');
+      message.success('Download successful');
     } catch (error: any) {
-      message.error('下载失败：' + error.message);
+      message.error('Download failed: ' + error.message);
     }
   };
   
   const handleRegenerateSingle = async (imageId: string) => {
     try {
       await regenerateSingleImage(imageId);
-      message.success('正在重新生成图片...');
+      message.success('Regenerating image...');
     } catch (error: any) {
-      message.error('重新生成失败：' + error.message);
+      message.error('Regeneration failed: ' + error.message);
     }
   };
   
@@ -127,10 +127,10 @@ export const DownloadStep: React.FC = () => {
       editingSplitResult.index,
       newText
     ).catch((error: any) => {
-      message.error('更新失败：' + error.message);
+      message.error('Update failed: ' + error.message);
     });
     
-    message.success('文本已更新，正在重新生成图片...');
+    message.success('Text updated, regenerating image...');
     
     // 立即关闭弹窗，让图片在后台生成
     setEditModalVisible(false);
@@ -144,7 +144,7 @@ export const DownloadStep: React.FC = () => {
     setSplitResults([]);
     setGeneratedImages([]);
     resetSteps();
-    message.info('已重置，开始新的转换');
+    message.info('Reset complete, start new conversion');
   };
   
   const handleBackToHome = () => {
@@ -163,11 +163,11 @@ export const DownloadStep: React.FC = () => {
   if (generatedImages.length === 0) {
     return (
       <StepContainer
-        title="📥 批量下载"
+        title="📥 Batch Download"
         showNavigation={false}
       >
         <Empty
-          description="暂无可下载的图片"
+          description="No images available for download"
           className="py-12"
         >
           <Button
@@ -175,7 +175,7 @@ export const DownloadStep: React.FC = () => {
             icon={<HomeOutlined />}
             onClick={handleBackToHome}
           >
-            返回首页
+            Back to Home
           </Button>
         </Empty>
       </StepContainer>
@@ -184,7 +184,7 @@ export const DownloadStep: React.FC = () => {
   
   return (
     <StepContainer
-      title={`✨ 生成完成！共${totalCount}张图片`}
+      title={`✨ Generation Complete! ${totalCount} Images`}
       showNavigation={false}
     >
       <div className="space-y-6">
@@ -193,11 +193,11 @@ export const DownloadStep: React.FC = () => {
           <Space>
             <CheckCircleOutlined className="text-green-500 text-xl" />
             <Text>
-              成功生成 {successCount}/{totalCount} 张图片
+              Successfully generated {successCount}/{totalCount} images
             </Text>
             {successCount < totalCount && (
               <Text type="warning">
-                ({totalCount - successCount} 张失败)
+                ({totalCount - successCount} failed)
               </Text>
             )}
           </Space>
@@ -212,7 +212,7 @@ export const DownloadStep: React.FC = () => {
                 indeterminate={selectedImages.length > 0 && selectedImages.length < successCount}
                 onChange={(e) => handleSelectAll(e.target.checked)}
               >
-                全选 ({selectedImages.length}/{successCount})
+                Select All ({selectedImages.length}/{successCount})
               </Checkbox>
             </Space>
             <Button
@@ -222,7 +222,7 @@ export const DownloadStep: React.FC = () => {
               loading={downloading}
               disabled={selectedImages.length === 0}
             >
-              打包下载选中项
+              Download Selected
             </Button>
           </div>
           
@@ -257,7 +257,7 @@ export const DownloadStep: React.FC = () => {
               icon={<HomeOutlined />}
               onClick={handleBackToHome}
             >
-              返回首页
+              Back to Home
             </Button>
             <Button
               type="primary"
@@ -265,7 +265,7 @@ export const DownloadStep: React.FC = () => {
               icon={<FileAddOutlined />}
               onClick={handleStartNew}
             >
-              开始新的转换
+              Start New Conversion
             </Button>
           </Space>
         </div>

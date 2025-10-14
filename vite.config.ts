@@ -28,7 +28,7 @@ export default defineConfig({
           });
         }
       },
-      // 代理豆包图片生成API
+      // 代理豆包图片生成API（直接调用，用户提供API key）
       '/api/images': {
         target: 'https://ark.cn-beijing.volces.com',
         changeOrigin: true,
@@ -41,14 +41,14 @@ export default defineConfig({
             proxyReq.setHeader('Authorization', `Bearer ${apiKey}`);
             proxyReq.setHeader('Content-Type', 'application/json');
             
-            // 记录代理请求日志
-            // console.log('[Proxy] Images API Request:', req.url);
+            console.log('🖼️ [Proxy] Images API Request:', req.url);
+            console.log('🔑 [Proxy] Using API Key:', apiKey ? `${apiKey.substring(0, 10)}...` : 'None');
           });
-          proxy.on('proxyRes', (_proxyRes: any, _req: any, _res: any) => {
-            // console.log('[Proxy] Images API Response:', proxyRes.statusCode);
+          proxy.on('proxyRes', (proxyRes: any, _req: any, _res: any) => {
+            console.log('📡 [Proxy] Images API Response:', proxyRes.statusCode);
           });
-          proxy.on('error', (_err: any, _req: any, _res: any) => {
-            // console.error('[Proxy] Error:', err);
+          proxy.on('error', (err: any, _req: any, _res: any) => {
+            console.error('❌ [Proxy] Images API Error:', err);
           });
         }
       },

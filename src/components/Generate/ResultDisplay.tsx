@@ -60,7 +60,7 @@ export const ResultDisplay: React.FC<ResultDisplayProps> = ({
               icon={<DownloadOutlined />}
               onClick={onDownloadAll}
             >
-              批量下载
+              Batch Download
             </Button>
           )}
         </div>

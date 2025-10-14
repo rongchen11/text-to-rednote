@@ -69,9 +69,9 @@ export const SplitStep: React.FC = () => {
       // 判断是否使用了AI
       const isAI = results.length > 0 && results[0].text.length > 0;
       if (isAI) {
-        message.success(`🤖 AI智能拆分成功！共${results.length}个部分`);
+        message.success(`🤖 AI smart splitting successful! ${results.length} parts in total`);
       } else {
-        message.success(`✅ 成功拆分为${results.length}个部分`);
+        message.success(`✅ Successfully split into ${results.length} parts`);
       }
       
       // 保存到历史记录
@@ -86,7 +86,7 @@ export const SplitStep: React.FC = () => {
         });
       }
     } catch (error: any) {
-      message.error('文本拆分失败：' + error.message);
+      message.error('Text splitting failed: ' + error.message);
     } finally {
       setIsSplitting(false);
     }
@@ -94,13 +94,13 @@ export const SplitStep: React.FC = () => {
   
   const handleEdit = (index: number, newText: string) => {
     updateSplitResult(index, newText);
-    message.success('内容已更新');
+    message.success('Content updated');
   };
   
   const handleDelete = (index: number) => {
     const newResults = splitResults.filter((_, i) => i !== index);
     setSplitResults(newResults);
-    message.success('已删除');
+    message.success('Deleted');
   };
   
   const handleAdd = () => {
@@ -124,16 +124,16 @@ export const SplitStep: React.FC = () => {
       <StepContainer 
         title={
           <div className="flex items-center gap-2">
-            <span>🤖 AI智能拆分</span>
-            <Tag color="green" icon={<GiftOutlined />}>免费功能</Tag>
+            <span>🤖 AI Smart Splitting</span>
+            <Tag color="green" icon={<GiftOutlined />}>Free Feature</Tag>
           </div>
         }
         showNavigation={false}
       >
         <div className="flex flex-col items-center justify-center h-96">
           <Spin size="large" />
-          <Text className="mt-4">正在使用AI智能拆分文本...</Text>
-          <Text type="secondary" className="mt-2">✨ 免费AI服务，无需配置API密钥</Text>
+          <Text className="mt-4">Using AI to intelligently split text...</Text>
+          <Text type="secondary" className="mt-2">✨ Free AI service, no API key configuration required</Text>
         </div>
       </StepContainer>
     );
@@ -143,8 +143,8 @@ export const SplitStep: React.FC = () => {
     <StepContainer
       title={
         <div className="flex items-center gap-2">
-          <span>🤖 AI智能拆分结果（共{splitResults.length}个部分）</span>
-          <Tag color="green" icon={<GiftOutlined />}>免费功能</Tag>
+          <span>🤖 AI Smart Splitting Results ({splitResults.length} parts)</span>
+          <Tag color="green" icon={<GiftOutlined />}>Free Feature</Tag>
         </div>
       }
       nextDisabled={splitResults.length === 0}
@@ -157,9 +157,9 @@ export const SplitStep: React.FC = () => {
         {/* 操作栏 */}
         <div className="flex justify-between items-center mb-4">
           <Space>
-            <Tag color="blue">共 {splitResults.length} 个部分</Tag>
+            <Tag color="blue">{splitResults.length} parts in total</Tag>
             <Tag color="green">
-              总字数: {splitResults.reduce((sum, r) => sum + r.charCount, 0)}
+              Total characters: {splitResults.reduce((sum, r) => sum + r.charCount, 0)}
             </Tag>
           </Space>
           <Space>
@@ -190,11 +190,11 @@ export const SplitStep: React.FC = () => {
               title={
                 <div className="flex justify-between items-center">
                   <span>
-                    {result.type === 'cover' ? '📌 封面' : `📄 内容${result.index}`}
+                    {result.type === 'cover' ? '📌 Cover' : `📄 Content ${result.index}`}
                   </span>
                   <Space>
                     <Text type="secondary" className="text-sm">
-                      {result.charCount} 字
+                      {result.charCount} chars
                     </Text>
                     <Button
                       type="text"
@@ -219,7 +219,7 @@ export const SplitStep: React.FC = () => {
         {/* 提示信息 */}
         {splitResults.length === 0 && (
           <div className="text-center py-8">
-            <Text type="secondary">暂无拆分结果，请点击"重新拆分"按钮</Text>
+            <Text type="secondary">No splitting results available, please click "Re-split" button</Text>
           </div>
         )}
       </div>

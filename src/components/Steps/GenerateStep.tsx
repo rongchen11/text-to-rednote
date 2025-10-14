@@ -49,6 +49,9 @@ export const GenerateStep: React.FC = () => {
     watermarkEnabled,
   } = useAppStore();
   
+  // 添加选择状态，默认选择前5个
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  
   const {
     templates,
     getTemplateById,
@@ -61,22 +64,50 @@ export const GenerateStep: React.FC = () => {
   // Credits and auth status
   const { isAuthenticated, user, deductCredits } = useAuthStore();
   
+  // Initialize selection state, default to first 5 items
+  useEffect(() => {
+    if (splitResults.length > 0) {
+      // Default select first 5 items, or all available (if less than 5)
+      const defaultSelection = splitResults
+        .slice(0, Math.min(5, splitResults.length))
+        .map((_, index) => index);
+      setSelectedItems(defaultSelection);
+    }
+  }, [splitResults]);
+  
   // Validate if can proceed to next step
   useEffect(() => {
     setCanProceed(generatedImages.length > 0 && !isGenerating);
   }, [generatedImages, isGenerating, setCanProceed]);
   
   const handleGenerateImages = async () => {
-    console.log('🎯 Generate button clicked');
+    console.log('🎯 Generate button clicked - handleGenerateImages called');
+    
     console.log('🔍 Current state:', {
       isAuthenticated,
       user: user ? `User ID: ${user.id}` : 'No user',
       selectedTemplateId,
       templatesLength: templates.length,
       splitResultsLength: splitResults.length,
+      selectedItemsLength: selectedItems.length,
+      selectedItems,
       userCredits: user?.credits || 0,
-      requiredCredits: splitResults.length * 20
+      requiredCredits: selectedItems.length * 20
     });
+    
+    // 检查API密钥
+    const apiKey = localStorage.getItem('doubao_api_key');
+    console.log('🔑 API Key status:', apiKey ? 'Configured' : 'Missing');
+    if (!apiKey) {
+      console.log('❌ API key check failed');
+      message.error({
+        content: '🔑 Please configure your Doubao-Seedream-4.0 API key in Settings to enable image generation.',
+        duration: 5
+      });
+      return;
+    }
+    
+    console.log('✅ API key check passed');
     
     // Check if user is logged in
     if (!isAuthenticated || !user) {
@@ -92,27 +123,34 @@ export const GenerateStep: React.FC = () => {
     const template = getTemplateById(selectedTemplateId);
     console.log('🎨 Retrieved template:', template);
     if (!template) {
-      console.log('❌ 模板未找到');
-      message.error('请选择一个模板');
+      console.log('❌ Template not found');
+      message.error('Please select a template');
       return;
     }
     
-    console.log('📝 检查拆分结果:', splitResults.length);
+    console.log('📝 Checking split results:', splitResults.length);
     if (splitResults.length === 0) {
-      console.log('❌ 没有拆分结果');
-      message.error('没有可生成的内容');
+      console.log('❌ No split results');
+      message.error('No content available for generation');
+      return;
+    }
+    
+    console.log('📝 Checking selected items:', selectedItems.length);
+    if (selectedItems.length === 0) {
+      console.log('❌ No items selected');
+      message.error('Please select at least one image to generate');
       return;
     }
     
     // 计算需要消耗的积分（每张图片20积分）
-    const requiredCredits = splitResults.length * 20;
-    console.log('💰 积分检查:', { userCredits: user.credits, requiredCredits });
+    const requiredCredits = selectedItems.length * 20;
+    console.log('💰 积分检查:', { userCredits: user.credits, requiredCredits, selectedCount: selectedItems.length });
     
     // 检查积分是否充足
     if (user.credits < requiredCredits) {
       console.log('❌ 积分不足');
       message.error({
-        content: `积分不足！生成${splitResults.length}张图片需要${requiredCredits}积分，您当前有${user.credits}积分。请购买积分后继续。`,
+        content: `Insufficient credits! Generating ${selectedItems.length} images requires ${requiredCredits} credits, but you only have ${user.credits} credits. Please purchase credits to continue.`,
         duration: 8
       });
       return;
@@ -127,18 +165,18 @@ export const GenerateStep: React.FC = () => {
     
     if (useDirectGeneration) {
       // 使用简单的window.confirm作为临时解决方案
-      confirmed = window.confirm(`确认生成图片？\n将生成 ${splitResults.length} 张图片\n消耗积分: ${requiredCredits}\n剩余积分: ${user.credits - requiredCredits}`);
+      confirmed = window.confirm(`Confirm image generation?\nGenerate ${selectedItems.length} images\nCost: ${requiredCredits} credits\nRemaining: ${user.credits - requiredCredits} credits`);
       console.log('💬 window.confirm 结果:', confirmed);
     } else {
       // 原来的Modal.confirm方式
       confirmed = await new Promise((resolve) => {
         Modal.confirm({
-          title: '确认生成图片',
+          title: 'Confirm Image Generation',
           content: (
             <div>
-              <p>将生成 <strong>{splitResults.length}</strong> 张图片</p>
-              <p>消耗积分: <strong>{requiredCredits}</strong></p>
-              <p>剩余积分: <strong>{user.credits - requiredCredits}</strong></p>
+              <p>Generate <strong>{selectedItems.length}</strong> images</p>
+              <p>Cost: <strong>{requiredCredits}</strong> credits</p>
+              <p>Remaining: <strong>{user.credits - requiredCredits}</strong> credits</p>
             </div>
           ),
           onOk: () => {
@@ -173,16 +211,17 @@ export const GenerateStep: React.FC = () => {
       console.log('💰 积分扣除结果:', deductResult);
       if (!deductResult) {
         console.log('❌ 积分扣除失败');
-        message.error('积分扣除失败，请重试');
+        message.error('Credit deduction failed, please try again');
         return;
       }
       
       console.log('✅ 积分扣除成功，开始准备生成');
-      message.success(`已扣除${requiredCredits}积分，开始生成图片...`);
+      message.success(`${requiredCredits} credits deducted, starting image generation...`);
       
       console.log('📝 准备提示词...');
-      // 准备提示词
-      const prompts = PromptBuilder.buildPrompts(template, splitResults);
+      // 准备提示词，只为选中的项目生成
+      const selectedSplitResults = selectedItems.map(index => splitResults[index]);
+      const prompts = PromptBuilder.buildPrompts(template, selectedSplitResults);
       console.log('📝 生成的提示词:', prompts);
       
       // 初始化图片状态（包含prompt和templateId）
@@ -235,24 +274,24 @@ export const GenerateStep: React.FC = () => {
       if (finalFailed > 0) {
         const refundCredits = finalFailed * 20;
         await deductCredits(-refundCredits); // 负数表示增加积分
-        message.warning(`${finalFailed}张图片生成失败，已返还${refundCredits}积分`);
+        message.warning(`${finalFailed} images failed to generate, ${refundCredits} credits refunded`);
       }
       
       if (finalCompleted > 0) {
-        message.success(`成功生成${finalCompleted}张图片！`);
+        message.success(`Successfully generated ${finalCompleted} images!`);
         // 自动进入下一步
         setTimeout(() => nextStep(), 1000);
       } else {
-        message.error('所有图片生成失败，积分已全部返还');
+        message.error('All images failed to generate, all credits have been refunded');
       }
       
     } catch (error: any) {
       console.error('Generation error:', error);
-      message.error(`生成失败: ${error.message || '未知错误'}`);
+      message.error(`Generation failed: ${error.message || 'Unknown error'}`);
       
       // 发生错误时返还积分
       await deductCredits(-requiredCredits);
-      message.info('已返还所有积分');
+      message.info('All credits have been refunded');
     } finally {
       setIsGenerating(false);
       setGenerationProgress(100);
@@ -321,7 +360,7 @@ export const GenerateStep: React.FC = () => {
                             <Space direction="vertical" className="w-full">
                               <Text strong>{template.name}</Text>
                               {!template.isPreset && (
-                                <Text type="secondary" className="text-xs">自定义</Text>
+                                <Text type="secondary" className="text-xs">Custom</Text>
                               )}
                             </Space>
                           </Radio>
@@ -336,7 +375,7 @@ export const GenerateStep: React.FC = () => {
                       >
                         <div className="text-center">
                           <PlusOutlined className="text-2xl mb-2" />
-                          <div>添加自定义模板</div>
+                          <div>Add Custom Template</div>
                         </div>
                       </Card>
                     </Col>
@@ -350,14 +389,14 @@ export const GenerateStep: React.FC = () => {
               size="small" 
               title={
                 <div className="flex items-center gap-2">
-                  <span>图片设置</span>
+                  <span>Image Settings</span>
                   {isAuthenticated && user ? (
                     <Tag color="green" icon={<KeyOutlined />}>
-                      {user.credits} 积分
+                      {user.credits} credits
                     </Tag>
                   ) : (
                     <Tag color="red" icon={<KeyOutlined />}>
-                      未登录
+                      Not logged in
                     </Tag>
                   )}
                 </div>
@@ -366,8 +405,8 @@ export const GenerateStep: React.FC = () => {
               <Space direction="vertical" className="w-full">
                 {!isAuthenticated && (
                   <Alert
-                    message="需要登录"
-                    description="图片生成功能需要您先登录账号。"
+                    message="Login Required"
+                    description="Image generation requires you to log in to your account first."
                     type="warning"
                     showIcon
                   />
@@ -379,9 +418,53 @@ export const GenerateStep: React.FC = () => {
                 <Checkbox checked={watermarkEnabled} disabled>
                   Add watermark
                 </Checkbox>
+                
+                {/* 选择生成的图片 */}
+                <div>
+                  <Text strong className="block mb-2">Select images to generate:</Text>
+                  <div className="max-h-48 overflow-y-auto space-y-2">
+                    {splitResults.map((result, index) => (
+                      <div key={index} className="flex items-start space-x-2">
+                        <Checkbox 
+                          checked={selectedItems.includes(index)}
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            if (checked) {
+                              setSelectedItems([...selectedItems, index]);
+                            } else {
+                              setSelectedItems(selectedItems.filter(i => i !== index));
+                            }
+                          }}
+                        />
+                        <Text className="text-sm flex-1">
+                          {index + 1}. {result.text.substring(0, 60)}{result.text.length > 60 ? '...' : ''}
+                        </Text>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* 快速选择按钮 */}
+                  <div className="mt-3 space-x-2">
+                    <Button size="small" onClick={() => {
+                      const first5 = splitResults.slice(0, 5).map((_, i) => i);
+                      setSelectedItems(first5);
+                    }}>
+                      Select First 5
+                    </Button>
+                    <Button size="small" onClick={() => {
+                      setSelectedItems(splitResults.map((_, i) => i));
+                    }}>
+                      Select All
+                    </Button>
+                    <Button size="small" onClick={() => setSelectedItems([])}>
+                      Clear All
+                    </Button>
+                  </div>
+                </div>
+                
                 <div>
                   <Text type="secondary">
-                    Will generate {splitResults.length} images
+                    Will generate {selectedItems.length} images
                   </Text>
                   {isAuthenticated && (
                     <Text type="secondary" className="block mt-1">
@@ -390,7 +473,7 @@ export const GenerateStep: React.FC = () => {
                   )}
                   {isAuthenticated && user && (
                     <Text type="secondary" className="block mt-1">
-                      🔥 Required: {splitResults.length * 20} credits, Balance: {user.credits}
+                      🔥 Required: {selectedItems.length * 20} credits, Balance: {user.credits}
                     </Text>
                   )}
                 </div>
@@ -398,7 +481,7 @@ export const GenerateStep: React.FC = () => {
             </Card>
             
             {/* 生成按钮 */}
-            <div className="text-center">
+            <div className="text-center space-y-2">
               <Button
                 type="primary"
                 size="large"
@@ -407,21 +490,37 @@ export const GenerateStep: React.FC = () => {
                   console.log('🖱️ 按钮点击事件触发', e);
                   handleGenerateImages();
                 }}
-                disabled={!selectedTemplateId || templates.length === 0 || !isAuthenticated || !user || (user && user.credits < splitResults.length * 20)}
+                disabled={!selectedTemplateId || templates.length === 0 || !isAuthenticated || !user || selectedItems.length === 0 || (user && user.credits < selectedItems.length * 20)}
                 className="btn-hover-effect"
               >
 Generate Images
               </Button>
               
-              {/* 调试信息 */}
-              <div className="mt-2 text-xs text-gray-500">
-                <div>调试: 模板={selectedTemplateId ? '✓' : '✗'} | 
-                模板数={templates.length} | 
-                认证={isAuthenticated ? '✓' : '✗'} | 
-                用户={user ? '✓' : '✗'} | 
-                积分={user?.credits || 0} | 
-                需要={splitResults.length * 20}</div>
-                <div>按钮禁用状态: {(!selectedTemplateId || templates.length === 0 || !isAuthenticated || !user || (user && user.credits < splitResults.length * 20)) ? '是' : '否'}</div>
+              {/* 调试信息按钮 */}
+              <div>
+                <Button 
+                  size="small" 
+                  type="link" 
+                  onClick={() => {
+                    const apiKey = localStorage.getItem('doubao_api_key');
+                    const debugInfo = {
+                      isAuthenticated,
+                      hasUser: !!user,
+                      userCredits: user?.credits,
+                      selectedTemplateId,
+                      templatesCount: templates.length,
+                      selectedItemsCount: selectedItems.length,
+                      splitResultsCount: splitResults.length,
+                      apiKeyExists: !!apiKey,
+                      apiKeyPreview: apiKey ? `${apiKey.substring(0, 8)}...` : 'Not set',
+                      buttonDisabled: (!selectedTemplateId || templates.length === 0 || !isAuthenticated || !user || selectedItems.length === 0 || (user && user.credits < selectedItems.length * 20))
+                    };
+                    console.log('🔍 Debug Info:', debugInfo);
+                    alert(`Debug Information:\n\n${JSON.stringify(debugInfo, null, 2)}`);
+                  }}
+                >
+                  Debug Info
+                </Button>
               </div>
             </div>
           </>
@@ -433,7 +532,7 @@ Generate Images
             <div className="text-center mb-8">
               <LoadingOutlined className="text-4xl text-blue-500" />
               <Title level={4} className="mt-4">
-                正在生成图片...
+                Generating images...
               </Title>
             </div>
             
@@ -450,7 +549,7 @@ Generate Images
               {generatedImages.map((image) => (
                 <div key={image.id} className="flex items-center justify-between">
                   <Text>
-                    {image.type === 'cover' ? '封面' : `内容${image.index}`}
+                    {image.type === 'cover' ? 'Cover' : `Content ${image.index}`}
                   </Text>
                   <Text type={
                     image.status === 'success' ? 'success' :
@@ -458,10 +557,10 @@ Generate Images
                     image.status === 'generating' ? 'warning' :
                     'secondary'
                   }>
-                    {image.status === 'success' ? '✅ 完成' :
-                     image.status === 'error' ? '❌ 失败' :
-                     image.status === 'generating' ? '⏳ 生成中...' :
-                     '⏸ 等待中'}
+                    {image.status === 'success' ? '✅ Completed' :
+                     image.status === 'error' ? '❌ Failed' :
+                     image.status === 'generating' ? '⏳ Generating...' :
+                     '⏸ Waiting'}
                   </Text>
                 </div>
               ))}

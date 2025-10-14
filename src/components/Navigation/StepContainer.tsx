@@ -22,8 +22,8 @@ export const StepContainer: React.FC<StepContainerProps> = ({
   showNavigation = true,
   onNext,
   onPrev,
-  nextText = '下一步',
-  prevText = '上一步',
+  nextText = 'Next',
+  prevText = 'Previous',
   nextDisabled = false,
   loading = false,
 }) => {

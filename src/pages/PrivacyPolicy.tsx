@@ -13,14 +13,14 @@ const PrivacyPolicy: React.FC = () => {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Introduction</h2>
           <p className="text-gray-700">
-            Welcome to "Text to RedNote". We value your privacy. This Privacy Policy explains how we collect, use, and protect your information when you use our AI text-to-image service.
+            Welcome to "RedNote Writer". We value your privacy. This Privacy Policy explains how we collect, use, and protect your information when you use our AI text-to-image service.
           </p>
         </section>
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Service Description</h2>
           <p className="text-gray-700">
-            "Text to RedNote" is an AI-powered text-to-image service based on Doubao AI models. We provide users with intelligent text splitting and image generation functionality using a credit-based payment system.
+            "RedNote Writer" is an AI-powered text-to-image service based on Doubao AI models. We provide users with intelligent text splitting and image generation functionality using a credit-based payment system.
           </p>
         </section>
 
@@ -153,7 +153,7 @@ const PrivacyPolicy: React.FC = () => {
           <div className="mt-4 p-4 bg-gray-50 rounded-lg">
             <p className="text-gray-700">
               <strong>Email:</strong> support@rednotewriter.com<br />
-              <strong>Service:</strong> Text to RedNote<br />
+              <strong>Service:</strong> RedNote Writer<br />
               <strong>Subject:</strong> Privacy Policy Inquiry
             </p>
           </div>

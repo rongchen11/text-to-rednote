@@ -13,14 +13,14 @@ const TermsOfService: React.FC = () => {
         <section className="mb-8">
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Introduction</h2>
           <p className="text-gray-700">
-            Welcome to "Text to RedNote". By accessing or using our AI text-to-image service ("Service"), you agree to be bound by these Terms of Service ("Terms"). Please read these Terms carefully before using the Service.
+            Welcome to "RedNote Writer". By accessing or using our AI text-to-image service ("Service"), you agree to be bound by these Terms of Service ("Terms"). Please read these Terms carefully before using the Service.
           </p>
         </section>
 
         <section className="mb-8">
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Service Description</h2>
           <p className="text-gray-700 mb-4">
-            "Text to RedNote" is an intelligent text-to-image service powered by Doubao AI models. We provide users with:
+            "RedNote Writer" is an intelligent text-to-image service powered by Doubao AI models. We provide users with:
           </p>
           <ul className="list-disc list-inside text-gray-700 space-y-2">
             <li>Intelligent text splitting and semantic analysis</li>
@@ -172,7 +172,7 @@ const TermsOfService: React.FC = () => {
           <div className="mt-4 p-4 bg-gray-50 rounded-lg">
             <p className="text-gray-700">
               <strong>Email:</strong> support@rednotewriter.com<br />
-              <strong>Service:</strong> Text to RedNote<br />
+              <strong>Service:</strong> RedNote Writer<br />
               <strong>Subject:</strong> Terms of Service Inquiry
             </p>
           </div>
@@ -187,7 +187,7 @@ const TermsOfService: React.FC = () => {
 
         <div className="mt-12 p-4 bg-blue-50 rounded-lg">
           <p className="text-blue-800 text-sm">
-            <strong>Note:</strong> By using Text to RedNote, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service and our Privacy Policy.
+            <strong>Note:</strong> By using RedNote Writer, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service and our Privacy Policy.
           </p>
         </div>
       </div>

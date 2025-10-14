@@ -81,7 +81,7 @@ export const PaymentSuccess: React.FC = () => {
             </div>,
             <div key="actions" className="space-x-4">
               <Button type="primary" size="large" icon={<HomeOutlined />} onClick={handleBackToHome}>
-                返回首页
+                Back to Home
               </Button>
             </div>
           ]}

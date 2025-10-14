@@ -95,8 +95,8 @@ export class DownloadService {
           
           // 生成文件名
           const filename = image.type === 'cover' 
-            ? '封面.png' 
-            : `内容${image.index}.png`;
+            ? 'cover.png' 
+            : `content-${image.index}.png`;
           
           imgFolder.file(filename, blob);
           break; // 成功，退出重试循环

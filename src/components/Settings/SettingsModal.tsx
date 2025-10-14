@@ -10,6 +10,7 @@ interface SettingsModalProps {
   onSave: (settings: {
     imageSize: string;
     watermarkEnabled: boolean;
+    doubaoApiKey?: string;
   }) => void;
 }
 
@@ -22,13 +23,18 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 }) => {
   const [form] = Form.useForm();
   const [localWatermark, setLocalWatermark] = useState(watermarkEnabled);
+  const [doubaoApiKey, setDoubaoApiKey] = useState('');
 
   React.useEffect(() => {
     if (visible) {
+      // 从localStorage读取保存的API密钥
+      const savedApiKey = localStorage.getItem('doubao_api_key') || '';
       form.setFieldsValue({
         imageSize: imageSize || '1024x1024',
+        doubaoApiKey: savedApiKey,
       });
       setLocalWatermark(watermarkEnabled);
+      setDoubaoApiKey(savedApiKey);
     }
   }, [visible, imageSize, watermarkEnabled, form]);
 
@@ -52,9 +58,18 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
+      
+      // 保存API密钥到localStorage
+      if (values.doubaoApiKey) {
+        localStorage.setItem('doubao_api_key', values.doubaoApiKey);
+      } else {
+        localStorage.removeItem('doubao_api_key');
+      }
+      
       onSave({
         imageSize: values.imageSize,
         watermarkEnabled: localWatermark,
+        doubaoApiKey: values.doubaoApiKey,
       });
       message.success('Settings saved successfully');
       onClose();
@@ -79,15 +94,45 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       ]}
     >
       <div className="space-y-4">
-        <Alert
-          message="Credit-based Image Generation"
-          description="Image generation service is configured. Each image costs 20 credits (≈ $0.2). You can purchase credits to use the image generation feature."
-          type="info"
-          showIcon
-        />
+        {doubaoApiKey ? (
+          <Alert
+            message="🎉 Doubao-Seedream-4.0 API Configured"
+            description="Your Doubao-Seedream-4.0 API key is ready! You can now generate beautiful images with AI."
+            type="success"
+            showIcon
+          />
+        ) : (
+          <Alert
+            message="⚠️ Doubao-Seedream-4.0 API Key Required"
+            description="To enable image generation, you need to provide your own Doubao-Seedream-4.0 API key from Volcengine ARK Console. This ensures you have full control over your usage and costs."
+            type="warning"
+            showIcon
+          />
+        )}
       </div>
       
       <Form form={form} layout="vertical" className="mt-4">
+        <Form.Item
+          label="🎨 Doubao-Seedream-4.0 API Key"
+          name="doubaoApiKey"
+          extra={
+            <div className="text-sm text-gray-600">
+              <div>🔑 <strong>Required:</strong> You need your own Doubao-Seedream-4.0 API key for image generation</div>
+              <div>📝 Get your API key from: <a href="https://console.volcengine.com/ark" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">Volcengine ARK Console</a></div>
+              <div>🔒 Your API key is stored locally in your browser and never sent to our servers</div>
+              <div>💡 <strong>Model:</strong> Make sure to enable Doubao-Seedream-4.0 model in your ARK console</div>
+            </div>
+          }
+        >
+          <Input.Password 
+            placeholder="sk-xxxxx (Enter your Doubao-Seedream-4.0 API key)"
+            value={doubaoApiKey}
+            onChange={(e) => setDoubaoApiKey(e.target.value)}
+          />
+        </Form.Item>
+
+        <Divider />
+
         <Form.Item
           label="Image Size"
           name="imageSize"

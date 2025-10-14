@@ -27,11 +27,11 @@ export const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
     setDownloading(true);
     try {
       const filename = image.type === 'cover' 
-        ? `封面.png` 
-        : `内容${image.index}.png`;
+        ? `cover.png` 
+        : `content-${image.index}.png`;
       await DownloadService.downloadImage(image.url, filename);
     } catch (error) {
-      console.error('下载失败:', error);
+      console.error('Download failed:', error);
     } finally {
       setDownloading(false);
     }
@@ -39,7 +39,7 @@ export const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
 
   const getTitle = () => {
     if (!image) return '';
-    return image.type === 'cover' ? '封面图片' : `内容图片 ${image.index}`;
+    return image.type === 'cover' ? 'Cover Image' : `Content Image ${image.index}`;
   };
 
   return (
@@ -68,7 +68,7 @@ export const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
           loading={downloading}
           disabled={!image?.url}
         >
-          下载图片
+          Download Image
         </Button>,
         <Button
           key="regenerate"
@@ -78,17 +78,17 @@ export const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
             onClose();
           }}
         >
-          重新生成
+          Regenerate
         </Button>,
         <Button key="close" type="primary" onClick={onClose}>
-          关闭
+          Close
         </Button>,
       ]}
     >
       <div className="flex items-center justify-center w-full h-full relative">
         {imageLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
-            <Spin size="large" tip="加载图片中..." />
+            <Spin size="large" tip="Loading image..." />
           </div>
         )}
         {image?.url && (

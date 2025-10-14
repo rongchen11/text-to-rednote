@@ -38,14 +38,14 @@ export const TemplateModal: React.FC<TemplateModalProps> = ({
             ...template,
             ...values,
           });
-          message.success('模板更新成功');
+          message.success('Template updated successfully');
         }
       } else {
         onAdd({
           ...values,
           id: `custom_${Date.now()}`,
         });
-        message.success('模板添加成功');
+        message.success('Template added successfully');
       }
       
       form.resetFields();
@@ -58,7 +58,7 @@ export const TemplateModal: React.FC<TemplateModalProps> = ({
 
   const handleEdit = (template: Template) => {
     if (template.isPreset) {
-      message.warning('预设模板不可编辑');
+      message.warning('Preset templates cannot be edited');
       return;
     }
     
@@ -74,12 +74,12 @@ export const TemplateModal: React.FC<TemplateModalProps> = ({
   const handleDelete = (id: string) => {
     const template = templates.find(t => t.id === id);
     if (template?.isPreset) {
-      message.warning('预设模板不可删除');
+      message.warning('Preset templates cannot be deleted');
       return;
     }
     
     onDelete(id);
-    message.success('模板删除成功');
+    message.success('Template deleted successfully');
   };
 
   const handleCancel = () => {
@@ -92,7 +92,7 @@ export const TemplateModal: React.FC<TemplateModalProps> = ({
 
   return (
     <Modal
-      title="模板管理"
+      title="Template Management"
       open={visible}
       onCancel={onClose}
       width={800}
@@ -106,12 +106,12 @@ export const TemplateModal: React.FC<TemplateModalProps> = ({
             onClick={() => setShowForm(true)}
             className="mb-4"
           >
-            创建新模板
+            Create New Template
           </Button>
           
           <List
             dataSource={customTemplates}
-            locale={{ emptyText: '暂无自定义模板' }}
+            locale={{ emptyText: 'No custom templates' }}
             renderItem={(template) => (
               <Card
                 size="small"
@@ -122,10 +122,10 @@ export const TemplateModal: React.FC<TemplateModalProps> = ({
                     icon={<EditOutlined />}
                     onClick={() => handleEdit(template)}
                   >
-                    编辑
+                    Edit
                   </Button>,
                   <Popconfirm
-                    title="确定删除这个模板吗？"
+                    title="Are you sure you want to delete this template?"
                     onConfirm={() => handleDelete(template.id)}
                   >
                     <Button
@@ -133,7 +133,7 @@ export const TemplateModal: React.FC<TemplateModalProps> = ({
                       danger
                       icon={<DeleteOutlined />}
                     >
-                      删除
+                      Delete
                     </Button>
                   </Popconfirm>,
                 ]}
@@ -142,8 +142,8 @@ export const TemplateModal: React.FC<TemplateModalProps> = ({
                   title={template.name}
                   description={
                     <div className="text-xs text-gray-500">
-                      <div>封面提示词: {template.coverPrompt.slice(0, 50)}...</div>
-                      <div>内容提示词: {template.contentPrompt.slice(0, 50)}...</div>
+                      <div>Cover Prompt: {template.coverPrompt.slice(0, 50)}...</div>
+                      <div>Content Prompt: {template.contentPrompt.slice(0, 50)}...</div>
                     </div>
                   }
                 />
@@ -154,74 +154,74 @@ export const TemplateModal: React.FC<TemplateModalProps> = ({
       ) : (
         <Form form={form} layout="vertical">
           <Form.Item
-            label="模板名称"
+            label="Template Name"
             name="name"
             rules={[
-              { required: true, message: '请输入模板名称' },
+              { required: true, message: 'Please enter template name' },
               {
                 validator: (_, value) => {
                   if (!value || validators.isValidTemplateName(value)) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('模板名称长度应在1-20字符之间'));
+                  return Promise.reject(new Error('Template name should be 1-20 characters long'));
                 },
               },
             ]}
           >
-            <Input placeholder="例如：科技风、文艺风等" />
+            <Input placeholder="e.g.: Tech Style, Artistic Style, etc." />
           </Form.Item>
           
           <Form.Item
-            label="封面提示词"
+            label="Cover Prompt"
             name="coverPrompt"
             rules={[
-              { required: true, message: '请输入封面提示词' },
+              { required: true, message: 'Please enter cover prompt' },
               {
                 validator: (_, value) => {
                   if (!value || validators.isValidPrompt(value)) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('提示词必须包含{content}变量'));
+                  return Promise.reject(new Error('Prompt must contain {content} variable'));
                 },
               },
             ]}
-            extra="使用 {content} 作为文本内容的占位符"
+            extra="Use {content} as placeholder for text content"
           >
             <TextArea
               rows={3}
-              placeholder="生成一张XX风格的RedNote封面图，主题是：{content}，..."
+              placeholder="Generate a XX-style RedNote cover image with theme: {content}..."
             />
           </Form.Item>
           
           <Form.Item
-            label="内容提示词"
+            label="Content Prompt"
             name="contentPrompt"
             rules={[
-              { required: true, message: '请输入内容提示词' },
+              { required: true, message: 'Please enter content prompt' },
               {
                 validator: (_, value) => {
                   if (!value || validators.isValidPrompt(value)) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('提示词必须包含{content}变量'));
+                  return Promise.reject(new Error('Prompt must contain {content} variable'));
                 },
               },
             ]}
-            extra="使用 {content} 作为文本内容的占位符"
+            extra="Use {content} as placeholder for text content"
           >
             <TextArea
               rows={3}
-              placeholder="生成一张XX风格的RedNote内容配图，内容是：{content}，..."
+              placeholder="Generate a XX-style RedNote content image, content: {content}..."
             />
           </Form.Item>
           
           <Form.Item>
             <Space>
               <Button type="primary" onClick={handleSubmit}>
-                {editingId ? '更新' : '创建'}
+                {editingId ? 'Update' : 'Create'}
               </Button>
               <Button onClick={handleCancel}>
-                取消
+                Cancel
               </Button>
             </Space>
           </Form.Item>

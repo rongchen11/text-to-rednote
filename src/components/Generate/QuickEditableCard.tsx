@@ -33,7 +33,7 @@ export const QuickEditableCard: React.FC<QuickEditableCardProps> = ({
 }) => {
   const [textExpanded, setTextExpanded] = useState(false);
 
-  const typeLabel = image.type === 'cover' ? '封面' : `内容${image.index}`;
+  const typeLabel = image.type === 'cover' ? 'Cover' : `Content ${image.index}`;
   const displayText = splitResult?.text || '';
   const shouldShowExpand = displayText.length > 50;
   const truncatedText = displayText.substring(0, 50);
@@ -57,7 +57,7 @@ export const QuickEditableCard: React.FC<QuickEditableCardProps> = ({
       return (
         <div className="h-[200px] bg-gray-100 flex flex-col items-center justify-center rounded-t-lg">
           <LoadingOutlined className="text-3xl text-blue-500 mb-2" />
-          <Text type="secondary">生成中...</Text>
+          <Text type="secondary">Generating...</Text>
         </div>
       );
     }
@@ -65,9 +65,9 @@ export const QuickEditableCard: React.FC<QuickEditableCardProps> = ({
     if (image.status === 'error') {
       return (
         <div className="h-[200px] bg-gray-100 flex flex-col items-center justify-center rounded-t-lg">
-          <Text type="danger" className="mb-2">生成失败</Text>
+          <Text type="danger" className="mb-2">Generation Failed</Text>
           <Text type="secondary" className="text-xs text-center px-4">
-            {image.error || '未知错误'}
+            {image.error || 'Unknown error'}
           </Text>
         </div>
       );
@@ -76,7 +76,7 @@ export const QuickEditableCard: React.FC<QuickEditableCardProps> = ({
     // pending 状态
     return (
       <div className="h-[200px] bg-gray-100 flex items-center justify-center rounded-t-lg">
-        <Text type="secondary">等待生成</Text>
+        <Text type="secondary">Waiting to generate</Text>
       </div>
     );
   };
@@ -96,43 +96,40 @@ export const QuickEditableCard: React.FC<QuickEditableCardProps> = ({
 
     // 编辑按钮
     actions.push(
-      <Tooltip key="edit" title="编辑文本">
+      <Tooltip key="edit" title="Edit Text">
         <Button
           type="text"
+          size="small"
           icon={<EditOutlined />}
           onClick={onEdit}
           disabled={image.status === 'generating'}
-        >
-          编辑
-        </Button>
+        />
       </Tooltip>
     );
 
     // 重新生成按钮
     actions.push(
-      <Tooltip key="regenerate" title="重新生成图片">
+      <Tooltip key="regenerate" title="Regenerate">
         <Button
           type="text"
+          size="small"
           icon={image.status === 'generating' ? <LoadingOutlined /> : <ReloadOutlined />}
           onClick={onRegenerate}
           disabled={image.status === 'generating'}
-        >
-          {image.status === 'generating' ? '生成中' : '重新生成'}
-        </Button>
+        />
       </Tooltip>
     );
 
     // 下载按钮
     actions.push(
-      <Tooltip key="download" title="下载图片">
+      <Tooltip key="download" title="Download">
         <Button
           type="text"
+          size="small"
           icon={<DownloadOutlined />}
           onClick={onDownload}
           disabled={image.status !== 'success'}
-        >
-          下载
-        </Button>
+        />
       </Tooltip>
     );
 
@@ -150,13 +147,14 @@ export const QuickEditableCard: React.FC<QuickEditableCardProps> = ({
       cover={renderCardCover()}
       actions={renderActions()}
       bodyStyle={{ padding: '12px' }}
+      size="small"
     >
       <Space direction="vertical" className="w-full" size="small">
         {/* 标题 */}
         <div className="flex justify-between items-center">
           <Text strong>{typeLabel}</Text>
           {image.status === 'success' && (
-            <Text type="success" className="text-xs">✓ 已生成</Text>
+            <Text type="success" className="text-xs">✓ Generated</Text>
           )}
         </div>
 
@@ -176,7 +174,7 @@ export const QuickEditableCard: React.FC<QuickEditableCardProps> = ({
                 onClick={() => setTextExpanded(!textExpanded)}
                 className="p-0 mt-1 text-xs"
               >
-                {textExpanded ? '收起' : '展开全文'}
+                {textExpanded ? 'Collapse' : 'Expand'}
               </Button>
             )}
           </div>

@@ -68,7 +68,7 @@ export const PROXY_IMAGES_PATH = '/api/images'; // 图片生成API代理路径
 export const PRESET_TEMPLATES: Template[] = [
   {
     id: 'preset_huangshu_blue',
-    name: '黄叔淡蓝商务风',
+    name: 'Light Blue Business Style',
     coverPrompt: 'IMG_2094.CR2 帮我生成RedNote封面，大字突出标题，商务科技风, 2.5D插画, 蓝色渐变：{content}',
     contentPrompt: 'IMG_2094.CR2 帮我生成图片，创作一个信息图 Infographic 静态图片，商务科技风, 2.5D插画, 蓝色渐变：{content}',
     isPreset: true

@@ -17,6 +17,30 @@ class DoubaoAPIClient {
     // 开发环境：由 Vite 代理处理
     // 生产环境：由 Vercel Functions 处理
     this.initClient();
+    
+    // 从localStorage加载保存的API密钥
+    this.loadApiKeyFromStorage();
+  }
+
+  private loadApiKeyFromStorage() {
+    try {
+      let savedApiKey = localStorage.getItem('doubao_api_key');
+      
+      // 如果没有保存的API密钥，使用默认配置的密钥
+      if (!savedApiKey) {
+        const defaultApiKey = '28afd144-c5f2-4de9-8c02-022f58403819';
+        localStorage.setItem('doubao_api_key', defaultApiKey);
+        savedApiKey = defaultApiKey;
+        console.log('✅ Default API key configured');
+      }
+      
+      if (savedApiKey) {
+        this.setApiKey(savedApiKey);
+        console.log('✅ API key loaded from storage');
+      }
+    } catch (error) {
+      console.warn('Failed to load API key from storage:', error);
+    }
   }
 
   private initClient() {
@@ -40,6 +64,11 @@ class DoubaoAPIClient {
       },
       timeout: IMAGE_TIMEOUT, // 使用配置的超时时间
     });
+  }
+
+  // 重新加载API密钥（在设置更新后调用）
+  reloadApiKey() {
+    this.loadApiKeyFromStorage();
   }
 
   setImageSize(size: string) {

@@ -54,13 +54,13 @@ export const ImageCard: React.FC<ImageCardProps> = ({
   const getStatusText = () => {
     switch (image.status) {
       case 'success':
-        return '✅ 完成';
+        return '✅ Completed';
       case 'error':
-        return '❌ 失败';
+        return '❌ Failed';
       case 'generating':
-        return '⏳ 生成中...';
+        return '⏳ Generating...';
       case 'pending':
-        return '⏸ 等待中';
+        return '⏸ Waiting';
       default:
         return '';
     }
@@ -78,7 +78,7 @@ export const ImageCard: React.FC<ImageCardProps> = ({
             )}
             <img
               src={convertToProxyUrl(image.url)}
-              alt={image.type === 'cover' ? '封面' : `图片${image.index}`}
+              alt={image.type === 'cover' ? 'Cover' : `Image ${image.index}`}
               className="w-full h-auto object-contain cursor-pointer"
               style={{ 
                 maxHeight: '300px',
@@ -101,7 +101,7 @@ export const ImageCard: React.FC<ImageCardProps> = ({
               <EyeOutlined className="text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
           </div>
-          <div className="text-xs text-gray-500 text-center mt-1">点击查看大图</div>
+          <div className="text-xs text-gray-500 text-center mt-1">Click to view full size</div>
         </div>
       );
     }
@@ -109,7 +109,7 @@ export const ImageCard: React.FC<ImageCardProps> = ({
     if (image.status === 'generating') {
       return (
         <div className="mt-3 h-32 bg-gray-50 rounded-lg flex items-center justify-center">
-          <Spin tip="正在生成图片..." />
+          <Spin tip="Generating image..." />
         </div>
       );
     }
@@ -118,7 +118,7 @@ export const ImageCard: React.FC<ImageCardProps> = ({
       return (
         <div className="mt-3 h-32 bg-red-50 rounded-lg flex items-center justify-center">
           <div className="text-red-500 text-sm">
-            {image.error || '图片加载失败'}
+            {image.error || 'Image loading failed'}
           </div>
         </div>
       );
@@ -127,7 +127,7 @@ export const ImageCard: React.FC<ImageCardProps> = ({
     if (image.status === 'pending') {
       return (
         <div className="mt-3 h-32 bg-gray-50 rounded-lg flex items-center justify-center">
-          <div className="text-gray-400 text-sm">等待生成...</div>
+          <div className="text-gray-400 text-sm">Waiting to generate...</div>
         </div>
       );
     }
@@ -141,7 +141,7 @@ export const ImageCard: React.FC<ImageCardProps> = ({
         <div className="flex items-center space-x-3">
           {getStatusIcon()}
           <span className="font-medium">
-            {image.type === 'cover' ? '🖼 封面' : `🖼 图片${image.index}`}
+            {image.type === 'cover' ? '🖼 Cover' : `🖼 Image ${image.index}`}
           </span>
           <span className="text-sm text-gray-500">{getStatusText()}</span>
         </div>
@@ -152,7 +152,7 @@ export const ImageCard: React.FC<ImageCardProps> = ({
             icon={<ReloadOutlined />}
             onClick={onRegenerate}
           >
-            重新生成
+            Regenerate
           </Button>
         )}
       </div>

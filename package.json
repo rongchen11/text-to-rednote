@@ -1,5 +1,5 @@
 {
-  "name": "text-to-xiaohongshu",
+  "name": "rednote-writer",
   "private": true,
   "version": "1.6.3",
   "type": "module",
@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dev:api": "node local-api-server.js",
+    "dev:full": "concurrently \"npm run dev:api\" \"npm run dev\""
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",

@@ -44,16 +44,16 @@ export interface AuthUser {
   email?: string;
   username: string;
   credits: number;
+  hasReceivedFreeCredits?: boolean; // 是否已获得免费积分
 }
 
 export interface SignUpData {
-  email: string;
+  username: string;
   password: string;
   confirmPassword: string;
-  username?: string; // Optional username for display purposes
 }
 
 export interface SignInData {
-  email: string;
+  username: string;
   password: string;
 }
