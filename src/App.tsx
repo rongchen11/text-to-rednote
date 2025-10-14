@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ConfigProvider } from 'antd';
-import zhCN from 'antd/locale/zh_CN';
+import enUS from 'antd/locale/en_US';
 
 // Navigation Components
 import { StepIndicator } from './components/Navigation/StepIndicator';
@@ -152,7 +152,7 @@ function App() {
   };
 
   return (
-    <ConfigProvider locale={zhCN}>
+    <ConfigProvider locale={enUS}>
       <div className="flex flex-col min-h-screen bg-gray-100">
         {/* Header */}
         <div className="bg-white shadow-sm px-6 py-3 flex justify-between items-center">

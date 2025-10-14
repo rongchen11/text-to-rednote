@@ -36,14 +36,25 @@ export const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
   // Handle registration
   const handleRegister = async () => {
     try {
+      console.log('🚀 Sign Up button clicked - starting registration process');
       const values = await registerForm.validateFields();
+      console.log('✅ Form validation passed:', values);
+      
       const success = await signUp(values as SignUpData);
+      console.log('📊 Sign Up result:', success);
+      
       if (success) {
+        console.log('✅ Registration successful - closing modal');
         onClose();
         registerForm.resetFields();
+      } else {
+        console.log('❌ Registration failed - staying on form');
+        // Add visual feedback for failed registration
+        alert('Registration failed. Please check the error message above.');
       }
     } catch (error) {
-      console.error('Register form validation failed:', error);
+      console.error('❌ Register form validation failed:', error);
+      alert('Form validation failed: ' + error);
     }
   };
 
