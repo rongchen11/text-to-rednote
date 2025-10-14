@@ -47,12 +47,13 @@ export interface AuthUser {
 }
 
 export interface SignUpData {
-  username: string;
+  email: string;
   password: string;
   confirmPassword: string;
+  username?: string; // Optional username for display purposes
 }
 
 export interface SignInData {
-  username: string;
+  email: string;
   password: string;
 }

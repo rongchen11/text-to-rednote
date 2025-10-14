@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
-import { Modal, Form, Input, Button, Tabs, Space, Typography, Divider } from 'antd';
-import { UserOutlined, LockOutlined, SafetyOutlined } from '@ant-design/icons';
+import { Modal, Form, Input, Button, Tabs, Space, Typography, Divider, message } from 'antd';
+import { 
+  UserOutlined, 
+  LockOutlined, 
+  SafetyOutlined, 
+  MailOutlined,
+  GoogleOutlined,
+  GithubOutlined 
+} from '@ant-design/icons';
 import { useAuthStore } from '../../stores/useAuthStore';
 import type { SignUpData, SignInData } from '../../services/supabaseClient';
 
@@ -68,6 +75,54 @@ export const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
     }
   };
 
+  // Handle Google login
+  const handleGoogleLogin = async () => {
+    try {
+      console.log('🚀 Google login clicked');
+      message.info('Google login will be available after Supabase OAuth configuration');
+      // TODO: Implement Google OAuth with Supabase
+      // const { data, error } = await supabase.auth.signInWithOAuth({
+      //   provider: 'google',
+      // });
+    } catch (error) {
+      console.error('Google login error:', error);
+      message.error('Google login failed');
+    }
+  };
+
+  // Handle GitHub login
+  const handleGithubLogin = async () => {
+    try {
+      console.log('🚀 GitHub login clicked');
+      message.info('GitHub login will be available after Supabase OAuth configuration');
+      // TODO: Implement GitHub OAuth with Supabase
+      // const { data, error } = await supabase.auth.signInWithOAuth({
+      //   provider: 'github',
+      // });
+    } catch (error) {
+      console.error('GitHub login error:', error);
+      message.error('GitHub login failed');
+    }
+  };
+
+  // Handle forgot password
+  const handleForgotPassword = async () => {
+    try {
+      const email = loginForm.getFieldValue('email');
+      if (!email) {
+        message.warning('Please enter your email first');
+        return;
+      }
+      console.log('🚀 Forgot password for:', email);
+      message.info('Password reset functionality will be available after Supabase configuration');
+      // TODO: Implement password reset with Supabase
+      // const { error } = await supabase.auth.resetPasswordForEmail(email);
+    } catch (error) {
+      console.error('Forgot password error:', error);
+      message.error('Failed to send reset email');
+    }
+  };
+
   // Reset forms when closing modal
   const handleClose = () => {
     loginForm.resetFields();
@@ -103,7 +158,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
         centered
         size="large"
       >
-        <TabPane tab="Login" key="login">
+        <TabPane tab="Sign In" key="login">
           <Form
             form={loginForm}
             layout="vertical"
@@ -111,20 +166,23 @@ export const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
             size="large"
           >
             <Form.Item
-              name="username"
+              label="Email"
+              name="email"
               rules={[
-                { required: true, message: 'Please enter username' },
-                { min: 2, message: 'Username must be at least 2 characters' }
+                { required: true, message: 'Please enter email' },
+                { type: 'email', message: 'Please enter a valid email address' }
               ]}
             >
               <Input
-                prefix={<UserOutlined />}
-                placeholder="Username"
-                autoComplete="username"
+                prefix={<MailOutlined />}
+                placeholder="Input your email here"
+                autoComplete="email"
+                size="large"
               />
             </Form.Item>
 
             <Form.Item
+              label="Password"
               name="password"
               rules={[
                 { required: true, message: 'Please enter password' }
@@ -132,23 +190,64 @@ export const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
             >
               <Input.Password
                 prefix={<LockOutlined />}
-                placeholder="Password"
+                placeholder="Input your password here"
                 autoComplete="current-password"
+                size="large"
               />
             </Form.Item>
 
-            <Form.Item className="mb-0">
+            <Form.Item className="mb-4">
               <Button
                 type="primary"
                 htmlType="submit"
                 loading={isLoading}
                 block
                 size="large"
+                className="bg-orange-400 hover:bg-orange-500 border-orange-400 hover:border-orange-500"
               >
-                Login
+                Sign In
               </Button>
             </Form.Item>
           </Form>
+
+          {/* Forgot Password Link */}
+          <div className="text-center mb-4">
+            <Button 
+              type="link" 
+              onClick={handleForgotPassword}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              Forgot password?
+            </Button>
+          </div>
+
+          {/* Divider */}
+          <Divider className="my-6">
+            <span className="text-gray-400">OR</span>
+          </Divider>
+
+          {/* Third Party Login Buttons */}
+          <div className="space-y-3">
+            <Button
+              icon={<GoogleOutlined />}
+              onClick={handleGoogleLogin}
+              block
+              size="large"
+              className="flex items-center justify-center h-12 border-gray-300 hover:border-gray-400"
+            >
+              <span className="ml-2">Sign in with Google</span>
+            </Button>
+            
+            <Button
+              icon={<GithubOutlined />}
+              onClick={handleGithubLogin}
+              block
+              size="large"
+              className="flex items-center justify-center h-12 border-gray-300 hover:border-gray-400 bg-gray-900 text-white hover:bg-gray-800"
+            >
+              <span className="ml-2">Sign in with GitHub</span>
+            </Button>
+          </div>
         </TabPane>
 
         <TabPane tab="Sign Up" key="register">
@@ -159,25 +258,43 @@ export const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
             size="large"
           >
             <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                { required: true, message: 'Please enter email address' },
+                { type: 'email', message: 'Please enter a valid email address' }
+              ]}
+            >
+              <Input
+                prefix={<MailOutlined />}
+                placeholder="Input your email here"
+                autoComplete="email"
+                size="large"
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Username (Optional)"
               name="username"
               rules={[
-                { required: true, message: 'Please enter username' },
                 { min: 2, message: 'Username must be at least 2 characters' },
                 { max: 20, message: 'Username must not exceed 20 characters' },
                 { 
-                  pattern: /^[a-zA-Z0-9_\u4e00-\u9fa5]+$/, 
-                  message: 'Username can only contain letters, numbers, underscores and Chinese characters' 
+                  pattern: /^[a-zA-Z0-9_]+$/, 
+                  message: 'Username can only contain letters, numbers, and underscores' 
                 }
               ]}
             >
               <Input
                 prefix={<UserOutlined />}
-                placeholder="Username"
+                placeholder="Choose a display name (optional)"
                 autoComplete="username"
+                size="large"
               />
             </Form.Item>
 
             <Form.Item
+              label="Password"
               name="password"
               rules={[
                 { required: true, message: 'Please enter password' },
@@ -187,12 +304,14 @@ export const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
             >
               <Input.Password
                 prefix={<LockOutlined />}
-                placeholder="Password"
+                placeholder="Input your password here"
                 autoComplete="new-password"
+                size="large"
               />
             </Form.Item>
 
             <Form.Item
+              label="Confirm Password"
               name="confirmPassword"
               dependencies={['password']}
               rules={[
@@ -209,8 +328,9 @@ export const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
             >
               <Input.Password
                 prefix={<SafetyOutlined />}
-                placeholder="Confirm Password"
+                placeholder="Confirm your password"
                 autoComplete="new-password"
+                size="large"
               />
             </Form.Item>
 
@@ -235,6 +355,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
                 loading={isLoading}
                 block
                 size="large"
+                className="bg-orange-400 hover:bg-orange-500 border-orange-400 hover:border-orange-500"
               >
                 Sign Up
               </Button>

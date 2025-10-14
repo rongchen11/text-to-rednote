@@ -16,7 +16,7 @@ export class AuthService {
     
     // Demo mode: provide mock signup functionality when Supabase is not configured
     if (!this.isSupabaseConfigured()) {
-      console.log('🎭 Demo mode signup for:', data.username);
+      console.log('🎭 Demo mode signup for:', data.email);
       
       // Basic validation (same as real version)
       if (data.password !== data.confirmPassword) {
@@ -27,15 +27,19 @@ export class AuthService {
         return { success: false, error: 'Password must be at least 6 characters long' };
       }
       
-      if (data.username.length < 2) {
-        return { success: false, error: 'Username must be at least 2 characters long' };
+      // Email validation
+      if (!data.email || !data.email.includes('@')) {
+        return { success: false, error: 'Please enter a valid email address' };
       }
+      
+      // Generate username from email if not provided
+      const displayName = data.username || data.email.split('@')[0];
       
       // Create mock user for demo with bonus credits
       const mockUser: AuthUser = {
-        id: `demo-${data.username}`,
-        email: `${data.username}@demo.app`,
-        username: data.username,
+        id: `demo-${Date.now()}`,
+        email: data.email,
+        username: displayName,
         credits: 100 // New users get 100 credits as advertised
       };
       
@@ -57,32 +61,25 @@ export class AuthService {
         return { success: false, error: 'Password must be at least 6 characters long' };
       }
 
-      // 验证用户名
-      if (data.username.length < 2) {
-        return { success: false, error: 'Username must be at least 2 characters long' };
+      // 验证邮箱
+      if (!data.email || !data.email.includes('@')) {
+        return { success: false, error: 'Please enter a valid email address' };
       }
 
-      // 检查用户名是否已存在
-      const { data: existingUser } = await supabase
-        .from('user_profiles')
-        .select('username')
-        .eq('username', data.username)
-        .single();
-
-      if (existingUser) {
-        return { success: false, error: 'Username already exists' };
-      }
-
-      // 使用用户名作为邮箱（Supabase需要邮箱格式）
-      const email = `${data.username}@local.app`;
+      // 检查邮箱是否已存在
+      const { data: existingUser } = await supabase.auth.getUser();
+      
+      // Generate username from email if not provided
+      const displayName = data.username || data.email.split('@')[0];
 
       // 创建用户账户
       const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
+        email: data.email,
         password: data.password,
         options: {
           data: {
-            username: data.username
+            username: displayName,
+            full_name: displayName
           },
           emailRedirectTo: undefined // 禁用邮箱确认重定向
         }
@@ -102,7 +99,7 @@ export class AuthService {
         .from('user_profiles')
         .insert({
           id: authData.user.id,
-          username: data.username,
+          username: displayName,
           credits: 100, // 首次注册赠送100积分
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
@@ -119,7 +116,7 @@ export class AuthService {
       const user: AuthUser = {
         id: authData.user.id,
         email: authData.user.email,
-        username: data.username,
+        username: displayName,
         credits: 100
       };
 
@@ -135,7 +132,7 @@ export class AuthService {
     
     // Demo mode: provide mock login functionality when Supabase is not configured
     if (!this.isSupabaseConfigured()) {
-      console.log('🎭 Demo mode login for:', data.username);
+      console.log('🎭 Demo mode login for:', data.email);
       
       // Basic validation
       if (data.password.length < 3) {
@@ -145,11 +142,19 @@ export class AuthService {
         };
       }
       
+      // Email validation
+      if (!data.email || !data.email.includes('@')) {
+        return { 
+          success: false, 
+          error: 'Please enter a valid email address' 
+        };
+      }
+      
       // Create mock user for demo
       const mockUser: AuthUser = {
-        id: `demo-${data.username}`,
-        email: `${data.username}@demo.app`,
-        username: data.username,
+        id: `demo-${Date.now()}`,
+        email: data.email,
+        username: data.email.split('@')[0],
         credits: 1000 // Give demo users plenty of credits
       };
       
@@ -161,12 +166,14 @@ export class AuthService {
     }
     
     try {
-      // 使用用户名作为邮箱格式
-      const email = `${data.username}@local.app`;
+      // 直接使用提供的邮箱地址
+      if (!data.email || !data.email.includes('@')) {
+        return { success: false, error: 'Please enter a valid email address' };
+      }
 
       // 登录验证
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email,
+        email: data.email,
         password: data.password
       });
 
