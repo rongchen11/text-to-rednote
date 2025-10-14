@@ -38,16 +38,16 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           isAuthenticated: true,
           isLoading: false 
         });
-        message.success('注册成功！已为您赠送100积分');
+        message.success('Registration successful! 100 credits have been added to your account');
         return true;
       } else {
-        message.error(result.error || '注册失败');
+        message.error(result.error || 'Registration failed');
         set({ isLoading: false });
         return false;
       }
     } catch (error) {
       console.error('SignUp error:', error);
-      message.error('注册过程中发生错误');
+      message.error('Error occurred during registration');
       set({ isLoading: false });
       return false;
     }
@@ -65,16 +65,16 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           isAuthenticated: true,
           isLoading: false 
         });
-        message.success(`欢迎回来，${result.user.username}！`);
+        message.success(`Welcome back, ${result.user.username}!`);
         return true;
       } else {
-        message.error(result.error || '登录失败');
+        message.error(result.error || 'Login failed');
         set({ isLoading: false });
         return false;
       }
     } catch (error) {
       console.error('SignIn error:', error);
-      message.error('登录过程中发生错误');
+      message.error('Error occurred during login');
       set({ isLoading: false });
       return false;
     }
@@ -92,14 +92,14 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           isAuthenticated: false,
           isLoading: false 
         });
-        message.success('已成功登出');
+        message.success('Successfully logged out');
       } else {
-        message.error(result.error || '登出失败');
+        message.error(result.error || 'Logout failed');
         set({ isLoading: false });
       }
     } catch (error) {
       console.error('SignOut error:', error);
-      message.error('登出过程中发生错误');
+      message.error('Error occurred during logout');
       set({ isLoading: false });
     }
   },
@@ -136,12 +136,12 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         return true;
       } else {
         console.log('❌ Store deductCredits - 扣除失败:', result.error);
-        message.error(result.error || '积分扣除失败');
+        message.error(result.error || 'Failed to deduct credits');
         return false;
       }
     } catch (error) {
       console.error('❌ Store deductCredits - 异常:', error);
-      message.error('积分扣除过程中发生错误');
+      message.error('Error occurred while deducting credits');
       return false;
     }
   },
@@ -159,15 +159,15 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       
       if (result.success && result.newCredits !== undefined) {
         get().updateCredits(result.newCredits);
-        message.success(`成功获得${amount}积分`);
+        message.success(`Successfully received ${amount} credits`);
         return true;
       } else {
-        message.error(result.error || '积分增加失败');
+        message.error(result.error || 'Failed to add credits');
         return false;
       }
     } catch (error) {
       console.error('Add credits error:', error);
-      message.error('积分增加过程中发生错误');
+      message.error('Error occurred while adding credits');
       return false;
     }
   },

@@ -185,7 +185,7 @@ function App() {
               ⚙️ Settings
             </button>
             <a
-              href="mailto:chenrong871@gmail.com"
+              href="mailto:support@rednotewriter.com"
               className="px-3 py-1 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
             >
               📧 Contact Us

@@ -1,17 +1,36 @@
 import { supabase, type AuthUser, type SignUpData, type SignInData } from './supabaseClient';
 
 export class AuthService {
+  
+  // Check if Supabase is configured
+  private isSupabaseConfigured(): boolean {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    return supabaseUrl && supabaseAnonKey && 
+      !supabaseUrl.includes('your-project-id') && 
+      !supabaseAnonKey.includes('your-anon-key');
+  }
+
   // 用户注册
   async signUp(data: SignUpData): Promise<{ success: boolean; user?: AuthUser; error?: string }> {
+    
+    // Check configuration first
+    if (!this.isSupabaseConfigured()) {
+      return { 
+        success: false, 
+        error: 'Authentication service is not configured. This is a demo version. Please configure Supabase to enable user registration.' 
+      };
+    }
+    
     try {
       // 验证密码确认
       if (data.password !== data.confirmPassword) {
-        return { success: false, error: '两次输入的密码不一致' };
+        return { success: false, error: 'Password confirmation does not match' };
       }
 
       // 验证密码强度
       if (data.password.length < 6) {
-        return { success: false, error: '密码长度至少6位' };
+        return { success: false, error: 'Password must be at least 6 characters long' };
       }
 
       // 验证用户名
@@ -89,6 +108,15 @@ export class AuthService {
 
   // 用户登录
   async signIn(data: SignInData): Promise<{ success: boolean; user?: AuthUser; error?: string }> {
+    
+    // Check configuration first
+    if (!this.isSupabaseConfigured()) {
+      return { 
+        success: false, 
+        error: 'Authentication service is not configured. This is a demo version. Please configure Supabase to enable user login.' 
+      };
+    }
+    
     try {
       // 使用用户名作为邮箱格式
       const email = `${data.username}@local.app`;
@@ -146,7 +174,7 @@ export class AuthService {
       return { success: true };
     } catch (error) {
       console.error('Signout error:', error);
-      return { success: false, error: '登出过程中发生错误' };
+      return { success: false, error: 'Error occurred during logout' };
     }
   }
 

@@ -26,26 +26,26 @@ export const AuthButton: React.FC<AuthButtonProps> = ({ onOpenSettings }) => {
      return <UserProfile onOpenSettings={onOpenSettings} />;
    }
 
-  // If Supabase not configured, show configuration hint
-  if (!isConfigured) {
-    return (
-      <Popover
-        content={<ConfigStatus onOpenSettings={onOpenSettings} />}
-        title="Supabase Configuration Required"
-        trigger="click"
-        placement="bottomRight"
-        overlayStyle={{ maxWidth: 400 }}
-      >
-        <Button
-          type="default"
-          icon={<WarningOutlined />}
-          style={{ color: '#faad14', borderColor: '#faad14' }}
-        >
-          Setup Auth
-        </Button>
-      </Popover>
-    );
-  }
+  // Temporarily disable Supabase check - always show login for demo
+  // if (!isConfigured) {
+  //   return (
+  //     <Popover
+  //       content={<ConfigStatus onOpenSettings={onOpenSettings} />}
+  //       title="Supabase Configuration Required"
+  //       trigger="click"
+  //       placement="bottomRight"
+  //       overlayStyle={{ maxWidth: 400 }}
+  //     >
+  //       <Button
+  //         type="default"
+  //         icon={<WarningOutlined />}
+  //         style={{ color: '#faad14', borderColor: '#faad14' }}
+  //       >
+  //         Setup Auth
+  //       </Button>
+  //     </Popover>
+  //   );
+  // }
 
   // Show normal login button
   return (
