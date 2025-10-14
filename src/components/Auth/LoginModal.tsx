@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Modal, Form, Input, Button, Tabs, Space, Typography, Divider, message } from 'antd';
+import { Modal, Form, Input, Button, Tabs, Space, Typography, Divider } from 'antd';
 import { 
   UserOutlined, 
   LockOutlined, 
   SafetyOutlined
 } from '@ant-design/icons';
 import { useAuthStore } from '../../stores/useAuthStore';
-import { authService } from '../../services/authService';
 import type { SignUpData, SignInData } from '../../services/supabaseClient';
 
 const { Text, Title } = Typography;
@@ -22,7 +21,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
   const [loginForm] = Form.useForm();
   const [registerForm] = Form.useForm();
   
-  const { signIn, signUp, isLoading, setUser } = useAuthStore();
+  const { signIn, signUp, isLoading } = useAuthStore();
 
   // Handle login
   const handleLogin = async () => {
