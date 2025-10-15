@@ -266,7 +266,7 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({
               onClick={() => handlePayment(option)}
               loading={loading === option.id}
             >
-              {option.price === 5 ? `Pay $${option.price} - Get ${option.credits} Credits` : 'Upgrade to Premium'}
+              {option.price === 599 ? 'Upgrade to Ultimate' : 'Upgrade to Premium'}
             </Button>
           )}
         </div>
