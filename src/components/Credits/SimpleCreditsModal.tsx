@@ -50,19 +50,45 @@ export const SimpleCreditsModal: React.FC<SimpleCreditsModalProps> = ({
     try {
       setLoading(option.id);
       
-      // 使用 Creem 产品购买链接
-      // 格式：https://buy.creem.io/product/{product_id}
-      const checkoutUrl = `https://buy.creem.io/product/${option.product_id}`;
+      message.info('Creating payment session...');
       
-      message.info('Opening payment page...');
+      // 调用后端 API 创建 Creem checkout session
+      const response = await fetch('/api/payment/creem-checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          product_id: option.product_id,
+          customer_email: user.email,
+          metadata: {
+            user_id: user.id,
+            credits: option.credits.toString()
+          }
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to create checkout session');
+      }
+
+      const result = await response.json();
       
-      // 在新窗口打开支付页面
-      window.open(checkoutUrl, '_blank');
+      if (!result.success || !result.checkout_url) {
+        throw new Error('Invalid response from payment service');
+      }
+
+      console.log('✅ Checkout session created:', result);
+      
+      message.success('Redirecting to payment page...');
+      
+      // 跳转到 Creem 提供的 checkout_url
+      window.location.href = result.checkout_url;
       
     } catch (error) {
       console.error('Payment error:', error);
-      message.error('Failed to open payment page');
-    } finally {
+      message.error(error instanceof Error ? error.message : 'Failed to initiate payment');
       setLoading(null);
     }
   };
