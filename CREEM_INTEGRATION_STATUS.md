@@ -4,7 +4,8 @@
 
 ### 📋 配置信息
 - **API Key**: `creem_45FM6wm1YDgdhQ5hREjm6n` ✅
-- **Webhook URL**: `https://www.rednotewriter.com/api/webhook` ✅
+- **Webhook Secret**: `whsec_7XF3M66MEt4L3q2GmCdfYB` ✅
+- **Webhook URL**: `https://www.rednotewriter.com/api/payment/creem-webhook` ✅
 - **应用域名**: `https://www.rednotewriter.com` ✅
 
 ### 🏗️ 已创建的文件
@@ -25,30 +26,34 @@
 - ✅ `src/config/creemProducts.ts` - 产品配置管理
 - ✅ `env.example` - 环境变量示例（已更新）
 
-### 💎 产品配置
+### 💎 产品配置（已更新为新产品 ID）
 
-#### 基础积分包
-- **Product ID**: `prod_HkeKrlWaQEY0fdi1tndhR`
+#### Standard Plan（基础套餐）
+- **Product ID**: `prod_6vVTmdcL0l4O0D28hZk25L` ✅
 - **价格**: $5 USD
 - **积分**: 100 积分
+- **按钮文字**: "Upgrade to Premium"
 
-#### 专业积分包
-- **Product ID**: `prod_5ttzeSFClCVV7Xchzc8rYu`
+#### Unlimited Plan（无限套餐）
+- **Product ID**: `prod_5okTWJRCBjkApBlR7pEUnh` ✅
 - **价格**: $599 USD
 - **积分**: 15,000 积分
+- **按钮文字**: "Upgrade to Ultimate"
 
 ## 🔧 配置状态
 
 ### ✅ 已完成的配置
-1. **API Key 配置** - 已设置为 `creem_45FM6wm1YDgdhQ5hREjm6n`
-2. **域名配置** - 已更新为 `https://www.rednotewriter.com`
-3. **Webhook 端点** - 已创建 `/api/webhook` 匹配您的URL
-4. **产品映射** - 已配置两个产品的积分对应关系
-5. **API 格式支持** - 已适配 `creem_` 开头的API密钥格式
+1. **API Key 配置** - 已设置为 `creem_45FM6wm1YDgdhQ5hREjm6n` ✅
+2. **Webhook Secret** - 已设置为 `whsec_7XF3M66MEt4L3q2GmCdfYB` ✅
+3. **域名配置** - 已更新为 `https://www.rednotewriter.com` ✅
+4. **Webhook 端点** - 已创建 `/api/payment/creem-webhook` ✅
+5. **产品 ID 更新** - 已更新为新的正式产品 ID ✅
+6. **产品映射** - 已配置两个产品的积分对应关系 ✅
+7. **API 格式支持** - 已适配 Creem API 官方文档格式 ✅
 
 ### ⚠️ 待完成的配置
-1. **Webhook 密钥** - 需要从 Creem 控制台获取并配置
-2. **环境变量部署** - 需要在服务器上设置环境变量
+1. **Vercel 环境变量部署** - 需要在 Vercel 控制台设置环境变量
+2. **Creem Dashboard 配置** - 需要在 Creem 后台配置 Webhook
 
 ## 🚀 部署清单
 
@@ -60,19 +65,20 @@
 VITE_CREEM_API_KEY=creem_45FM6wm1YDgdhQ5hREjm6n
 CREEM_API_KEY=creem_45FM6wm1YDgdhQ5hREjm6n
 
-# 获取 Webhook 密钥后设置
-VITE_CREEM_WEBHOOK_SECRET=your_webhook_secret
-CREEM_WEBHOOK_SECRET=your_webhook_secret
+# Webhook 密钥（已配置）
+VITE_CREEM_WEBHOOK_SECRET=whsec_7XF3M66MEt4L3q2GmCdfYB
+CREEM_WEBHOOK_SECRET=whsec_7XF3M66MEt4L3q2GmCdfYB
 
 # 应用配置
 VITE_APP_URL=https://www.rednotewriter.com
+NEXT_PUBLIC_APP_URL=https://www.rednotewriter.com
 VITE_PAYMENT_PROVIDER=creem
 ```
 
 ### 2. Creem 控制台配置
-在 Creem 控制台中配置：
+在 Creem Dashboard (https://dashboard.creem.io) 中配置：
 
-- **Webhook URL**: `https://www.rednotewriter.com/api/webhook`
+- **Webhook URL**: `https://www.rednotewriter.com/api/payment/creem-webhook`
 - **事件类型**: 
   - `checkout.session.completed`
   - `payment_intent.succeeded`
