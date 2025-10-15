@@ -41,7 +41,7 @@
 ```bash
 # ✅ 正确：后端专用配置（无 VITE_ 前缀）
 CREEM_API_KEY=creem_45FM6wm1YDgdhQ5hREjm6n
-CREEM_WEBHOOK_SECRET=whsec_7XF3M66MEt4L3q2GmCdfYB
+CREEM_WEBHOOK_SECRET=whsec_7Zer79qbRSW39bKcx4QPXf
 ```
 
 ### 2️⃣ 应用配置（必需 - 前端安全配置）

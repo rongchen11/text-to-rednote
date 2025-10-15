@@ -4,7 +4,7 @@
 
 ### 📋 配置信息
 - **API Key**: `creem_45FM6wm1YDgdhQ5hREjm6n` ✅
-- **Webhook Secret**: `whsec_7XF3M66MEt4L3q2GmCdfYB` ✅
+- **Webhook Secret**: `whsec_7Zer79qbRSW39bKcx4QPXf` ✅
 - **Webhook URL**: `https://www.rednotewriter.com/api/payment/creem-webhook` ✅
 - **应用域名**: `https://www.rednotewriter.com` ✅
 
@@ -66,7 +66,7 @@
 ```bash
 # ✅ 后端专用配置（无 VITE_ 前缀 - 安全！）
 CREEM_API_KEY=creem_45FM6wm1YDgdhQ5hREjm6n
-CREEM_WEBHOOK_SECRET=whsec_7XF3M66MEt4L3q2GmCdfYB
+CREEM_WEBHOOK_SECRET=whsec_7Zer79qbRSW39bKcx4QPXf
 
 # ✅ 前端安全配置（可以有 VITE_ 前缀）
 VITE_APP_URL=https://www.rednotewriter.com
