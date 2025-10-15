@@ -58,8 +58,12 @@ export const SimpleCreditsModal: React.FC<SimpleCreditsModalProps> = ({
       if (option.payment_link) {
         // 添加用户信息到 URL 参数
         const paymentUrl = new URL(option.payment_link);
-        paymentUrl.searchParams.set('customer_email', user.email);
-        paymentUrl.searchParams.set('client_reference_id', user.id);
+        if (user.email) {
+          paymentUrl.searchParams.set('customer_email', user.email);
+        }
+        if (user.id) {
+          paymentUrl.searchParams.set('client_reference_id', user.id);
+        }
         
         console.log('✅ Redirecting to Creem payment:', paymentUrl.toString());
         
