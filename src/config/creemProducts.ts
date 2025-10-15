@@ -18,26 +18,22 @@ export interface CreemProductConfig {
 // 从用户提供的产品ID配置
 export const creemProducts: CreemProductConfig[] = [
   {
-    id: 'prod_HkeKrlWaQEY0fdi1tndhR',
-    name: '积分包 - 基础版',
-    description: '适合轻度使用，100积分让您体验核心功能',
+    id: 'prod_6vVTmdcL0l4O0D28hZk25L',
+    name: 'Standard Plan',
+    description: 'Great for getting started with 100 credits',
     amount: 5,
     credits: 100,
     interval: 'one_time',
-    popular: false
+    popular: true
   },
   {
-    id: 'prod_5ttzeSFClCVV7Xchzc8rYu',
-    name: '积分包 - 专业版',
-    description: '为重度用户设计，15000积分满足大量创作需求',
+    id: 'prod_5okTWJRCBjkApBlR7pEUnh',
+    name: 'Unlimited Plan',
+    description: 'One-time purchase for unlimited access with 15,000 credits',
     amount: 599,
     credits: 15000,
     interval: 'one_time',
-    popular: true,
-    discount: {
-      percentage: 20,
-      originalAmount: 749
-    }
+    popular: false
   }
 ];
 

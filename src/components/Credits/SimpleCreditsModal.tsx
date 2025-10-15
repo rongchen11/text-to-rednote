@@ -17,18 +17,18 @@ const PURCHASE_OPTIONS = [
     id: 'basic',
     price: 5,
     credits: 100,
-    label: 'Basic Plan',
+    label: 'Standard',
     description: 'Great for getting started',
-    product_id: 'prod_HkeKrlWaQEY0fdi1tndhR',
+    product_id: 'prod_6vVTmdcL0l4O0D28hZk25L',
     popular: true
   },
   {
     id: 'unlimited', 
     price: 599,
     credits: 15000,
-    label: 'Unlimited Plan',
+    label: 'Unlimited',
     description: 'One-time purchase, unlimited access',
-    product_id: 'prod_5ttzeSFClCVV7Xchzc8rYu',
+    product_id: 'prod_5okTWJRCBjkApBlR7pEUnh',
     popular: false
   }
 ];

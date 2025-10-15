@@ -12,16 +12,16 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 // 产品配置
 const PRODUCTS = {
-  'prod_HkeKrlWaQEY0fdi1tndhR': {
-    id: 'prod_HkeKrlWaQEY0fdi1tndhR',
-    name: '积分包 - 基础版',
+  'prod_6vVTmdcL0l4O0D28hZk25L': {
+    id: 'prod_6vVTmdcL0l4O0D28hZk25L',
+    name: 'Standard Plan',
     amount: 5,
     credits: 100,
     interval: 'one_time'
   },
-  'prod_5ttzeSFClCVV7Xchzc8rYu': {
-    id: 'prod_5ttzeSFClCVV7Xchzc8rYu', 
-    name: '积分包 - 专业版',
+  'prod_5okTWJRCBjkApBlR7pEUnh': {
+    id: 'prod_5okTWJRCBjkApBlR7pEUnh', 
+    name: 'Unlimited Plan',
     amount: 599,
     credits: 15000,
     interval: 'one_time'

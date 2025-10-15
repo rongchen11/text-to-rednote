@@ -26,21 +26,21 @@ const PURCHASE_OPTIONS = [
   {
     id: 'standard_pack',
     price: 5,
-    credits: 100, // 修正为实际的积分数
+    credits: 100,
     label: 'Standard',
     popular: true,
     description: 'Great value for regular users',
-    product_id: 'prod_HkeKrlWaQEY0fdi1tndhR', // 使用真实的 Creem 产品ID
+    product_id: 'prod_6vVTmdcL0l4O0D28hZk25L',
   },
   {
     id: 'unlimited_pack',
     price: 599,
-    credits: 15000, // 修正为实际的积分数
+    credits: 15000,
     label: 'Unlimited',
     popular: false,
     description: 'One-time purchase, unlimited access',
     isUnlimited: true,
-    product_id: 'prod_5ttzeSFClCVV7Xchzc8rYu', // 使用真实的 Creem 产品ID
+    product_id: 'prod_5okTWJRCBjkApBlR7pEUnh',
   },
 ];
 
