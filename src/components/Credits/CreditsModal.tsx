@@ -31,6 +31,7 @@ const PURCHASE_OPTIONS = [
     popular: true,
     description: 'Great value for regular users',
     product_id: 'prod_6vVTmdcL0l4O0D28hZk25L',
+    payment_link: 'https://www.creem.io/payment/prod_6vVTmdcL0l4O0D28hZk25L',
   },
   {
     id: 'unlimited_pack',
@@ -41,6 +42,7 @@ const PURCHASE_OPTIONS = [
     description: 'One-time purchase, unlimited access',
     isUnlimited: true,
     product_id: 'prod_5okTWJRCBjkApBlR7pEUnh',
+    payment_link: 'https://www.creem.io/payment/prod_5okTWJRCBjkApBlR7pEUnh',
   },
 ];
 
@@ -66,9 +68,25 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({
     try {
       setLoading(option.id);
       
-      message.info('Creating payment session...');
+      message.info('Redirecting to payment page...');
       
-      // 调用后端 API 创建 Creem checkout session
+      // 直接跳转到 Creem 支付链接
+      if (option.payment_link) {
+        const paymentUrl = new URL(option.payment_link);
+        if (user.email) {
+          paymentUrl.searchParams.set('customer_email', user.email);
+        }
+        if (user.id) {
+          paymentUrl.searchParams.set('client_reference_id', user.id);
+        }
+        
+        console.log('✅ Redirecting to Creem payment:', paymentUrl.toString());
+        
+        window.location.href = paymentUrl.toString();
+        return;
+      }
+
+      // 备用方案：通过后端 API 创建 checkout session
       const response = await fetch('/api/payment/creem-checkout', {
         method: 'POST',
         headers: {
@@ -97,9 +115,6 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({
 
       console.log('✅ Checkout session created:', result);
       
-      message.success('Redirecting to payment page...');
-      
-      // 跳转到 Creem 提供的 checkout_url
       window.location.href = result.checkout_url;
       
     } catch (error) {
