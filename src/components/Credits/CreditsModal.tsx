@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Modal, Card, Typography, message, Button } from 'antd';
 import { CrownOutlined, WalletOutlined } from '@ant-design/icons';
 import { useAuthStore } from '../../stores/useAuthStore';
-import { UnifiedPaymentButton } from '../Payment';
 import { LoginModal } from '../Auth/LoginModal';
 
 const { Title, Text, Paragraph } = Typography;
@@ -53,22 +52,42 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({
   const [loading, setLoading] = useState<string | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  // 支付相关处理
-  const handlePaymentStart = () => {
-    setLoading('payment');
-    message.info('Redirecting to payment page...');
-  };
+  const handlePayment = async (option: typeof PURCHASE_OPTIONS[0]) => {
+    if (!option.product_id) {
+      message.error('Product not available');
+      return;
+    }
 
-  const handlePaymentSuccess = (orderInfo: any) => {
-    console.log('支付成功:', orderInfo);
-    message.success('Payment link generated successfully, redirecting to payment page');
-    setLoading(null);
-  };
+    if (!isAuthenticated || !user) {
+      setShowLoginModal(true);
+      return;
+    }
 
-  const handlePaymentError = (error: string) => {
-    console.error('支付错误:', error);
-    message.error(`支付失败: ${error}`);
-    setLoading(null);
+    try {
+      setLoading(option.id);
+      
+      // 直接跳转到 Creem 支付页面
+      const baseUrl = 'https://creem.io/checkout';
+      const params = new URLSearchParams({
+        product_id: option.product_id,
+        customer_email: user.email || '',
+        success_url: `${window.location.origin}/payment/success`,
+        cancel_url: window.location.origin
+      });
+      
+      const checkoutUrl = `${baseUrl}?${params.toString()}`;
+      
+      message.info('Redirecting to payment page...');
+      
+      // 在新窗口打开支付页面
+      window.open(checkoutUrl, '_blank');
+      
+    } catch (error) {
+      console.error('Payment error:', error);
+      message.error('Failed to open payment page');
+    } finally {
+      setLoading(null);
+    }
   };
 
   // 处理免费套餐的逻辑

@@ -4,7 +4,7 @@ import { CrownOutlined } from '@ant-design/icons';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { LoginModal } from '../Auth/LoginModal';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 interface SimpleCreditsModalProps {
   visible: boolean;
@@ -160,8 +160,7 @@ export const SimpleCreditsModal: React.FC<SimpleCreditsModalProps> = ({
       {/* 登录Modal */}
       <LoginModal
         visible={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-        onSuccess={() => {
+        onClose={() => {
           setShowLoginModal(false);
           message.success('Login successful! You can now make a purchase.');
         }}
