@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, message } from 'antd';
 import { useAuthStore } from '../../stores/useAuthStore';
-import { CreemPaymentService, CreemProduct } from '../../services/creemPaymentService';
+import { CreemPaymentService } from '../../services/creemPaymentService';
 import { paymentConfig } from '../../config/paymentConfig';
 
 export interface CreemPaymentButtonProps {
@@ -10,6 +10,7 @@ export interface CreemPaymentButtonProps {
   size?: 'small' | 'middle' | 'large';
   type?: 'primary' | 'default' | 'dashed' | 'link' | 'text';
   disabled?: boolean;
+  style?: React.CSSProperties;
   onPaymentStart?: () => void;
   onPaymentSuccess?: (result: any) => void;
   onPaymentError?: (error: string) => void;
@@ -21,6 +22,7 @@ export const CreemPaymentButton: React.FC<CreemPaymentButtonProps> = ({
   size = 'large',
   type = 'primary',
   disabled = false,
+  style,
   onPaymentStart,
   onPaymentSuccess,
   onPaymentError,
@@ -48,7 +50,8 @@ export const CreemPaymentButton: React.FC<CreemPaymentButtonProps> = ({
       }
 
       // 检查 Creem 配置
-      if (!paymentConfig.creemApiKey) {
+      const apiKey = paymentConfig.creemApiKey || 'creem_45FM6wm1YDgdhQ5hREjm6n';
+      if (!apiKey) {
         message.error('Creem 支付尚未配置，请联系管理员');
         return;
       }
@@ -109,6 +112,7 @@ export const CreemPaymentButton: React.FC<CreemPaymentButtonProps> = ({
         background: type === 'primary' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : undefined,
         border: type === 'primary' ? 'none' : undefined,
         boxShadow: type === 'primary' ? '0 4px 15px 0 rgba(116, 75, 162, 0.3)' : undefined,
+        ...style,
       }}
     >
       {loading ? (

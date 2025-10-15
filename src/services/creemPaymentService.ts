@@ -23,7 +23,6 @@ export interface CreemProduct {
 }
 
 export class CreemPaymentService {
-  private static readonly API_BASE = 'https://api.creem.io/v1';
   
   // 产品配置
   private static readonly PRODUCTS: Record<string, CreemProduct> = {
@@ -42,19 +41,6 @@ export class CreemPaymentService {
       interval: 'one_time'
     }
   };
-
-  private static getApiKey(): string {
-    // 优先从环境变量获取
-    const apiKey = import.meta.env.VITE_CREEM_API_KEY || 
-                   import.meta.env.CREEM_API_KEY ||
-                   'creem_45FM6wm1YDgdhQ5hREjm6n'; // 默认API密钥
-    
-    if (!apiKey) {
-      throw new Error('Creem API 密钥未配置，请设置 VITE_CREEM_API_KEY 环境变量');
-    }
-    
-    return apiKey;
-  }
 
   private static getAppUrl(): string {
     return import.meta.env.VITE_APP_URL || 'https://www.rednotewriter.com';

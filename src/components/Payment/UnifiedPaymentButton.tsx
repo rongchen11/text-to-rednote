@@ -2,7 +2,7 @@ import React from 'react';
 import { paymentConfig } from '../../config/paymentConfig';
 import { PaymentButton } from './PaymentButton';
 import CreemPaymentButton from './CreemPaymentButton';
-import { Button, message, Space, Tag } from 'antd';
+import { Button, Space, Tag } from 'antd';
 
 interface UnifiedPaymentButtonProps {
   // Z-Pay 相关属性
