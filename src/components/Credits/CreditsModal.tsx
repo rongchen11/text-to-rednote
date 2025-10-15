@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Card, Typography, message, Button } from 'antd';
 import { CrownOutlined, WalletOutlined } from '@ant-design/icons';
 import { useAuthStore } from '../../stores/useAuthStore';
-import { PaymentButton } from '../Payment';
+import { UnifiedPaymentButton } from '../Payment';
 import { LoginModal } from '../Auth/LoginModal';
 
 const { Title, Text, Paragraph } = Typography;
@@ -12,7 +12,7 @@ interface CreditsModalProps {
   onClose: () => void;
 }
 
-// 海外市场购买选项配置
+// 海外市场购买选项配置（使用真实的 Creem 产品ID）
 const PURCHASE_OPTIONS = [
   {
     id: 'free_trial',
@@ -22,27 +22,26 @@ const PURCHASE_OPTIONS = [
     popular: false,
     description: 'Perfect for getting started',
     isFree: true,
-    product_id: 'free_trial_100', // Creem product_id
+    product_id: null, // 免费积分不使用 Creem
   },
   {
     id: 'standard_pack',
     price: 5,
-    credits: 500,
+    credits: 100, // 修正为实际的积分数
     label: 'Standard',
     popular: true,
     description: 'Great value for regular users',
-    bonus: 50, // 额外赠送
-    product_id: 'standard_550_credits', // Creem product_id
+    product_id: 'prod_HkeKrlWaQEY0fdi1tndhR', // 使用真实的 Creem 产品ID
   },
   {
     id: 'unlimited_pack',
     price: 599,
-    credits: -1, // -1 表示无限积分
+    credits: 15000, // 修正为实际的积分数
     label: 'Unlimited',
     popular: false,
     description: 'One-time purchase, unlimited access',
     isUnlimited: true,
-    product_id: 'unlimited_subscription', // Creem product_id
+    product_id: 'prod_5ttzeSFClCVV7Xchzc8rYu', // 使用真实的 Creem 产品ID
   },
 ];
 
@@ -117,7 +116,7 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({
   };
 
   const renderPurchaseCard = (option: typeof PURCHASE_OPTIONS[0]) => {
-    const totalCredits = option.isUnlimited ? -1 : option.credits + (option.bonus || 0);
+    const totalCredits = option.credits;
     
     return (
       <Card
@@ -211,11 +210,12 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({
               }
             </Button>
           ) : (
-            <PaymentButton
+            <UnifiedPaymentButton
+              productId={option.product_id}
               productName={option.label}
               amount={option.price}
               credits={totalCredits}
-              paymentType="card" // 海外默认信用卡支付
+              paymentType="card"
               type={option.popular ? 'primary' : 'default'}
               size="large"
               className="w-full"
