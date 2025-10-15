@@ -1,16 +1,13 @@
-// 支付配置文件
-// 在这里配置您的Z-Pay商户信息
+// 支付配置文件 - 前端安全版本
+// ⚠️ 重要：敏感信息（API密钥、Webhook Secret）仅在后端使用，不应暴露在前端
 
 export interface PaymentConfig {
-  // Z-Pay商户配置
+  // Z-Pay商户配置（后端使用，前端不应访问）
+  // 注意：这些配置仅用于向后兼容，实际应在后端环境变量中配置
   zpayPid: string;           // Z-Pay商户ID
   zpayKey: string;           // Z-Pay商户密钥
   
-  // Creem 配置
-  creemApiKey: string;       // Creem API 密钥
-  creemWebhookSecret: string; // Creem Webhook 密钥
-  
-  // 应用配置
+  // 应用配置（前端安全）
   appUrl: string;            // 应用域名
   siteName: string;          // 网站名称
   
@@ -20,36 +17,32 @@ export interface PaymentConfig {
   defaultPaymentProvider: 'zpay' | 'creem'; // 默认支付提供商
 }
 
-// 默认配置（真实支付模式）
+// 默认配置
 export const defaultPaymentConfig: PaymentConfig = {
-  // ✅ 真实Z-Pay商户信息
-  zpayPid: '2025062920440492',       // 您的真实商户ID
-  zpayKey: 'tNeFjVxC3b8IlgNJvqFA9oRNxy9ShaA1',       // 您的真实商户密钥
-  
-  // Creem 配置
-  creemApiKey: 'creem_45FM6wm1YDgdhQ5hREjm6n',  // 您的 Creem API 密钥
-  creemWebhookSecret: '',            // Webhook 密钥（从webhook配置中获取）
+  // Z-Pay 配置（向后兼容，应迁移到后端）
+  zpayPid: '2025062920440492',
+  zpayKey: 'tNeFjVxC3b8IlgNJvqFA9oRNxy9ShaA1',
   
   // 应用配置
   appUrl: 'https://www.rednotewriter.com',
   siteName: '文字转RedNote',
   
   // 模式配置
-  isDemoMode: false,         // ✅ 启用真实支付
-  enableDebugLog: true,      // 开发时建议启用
+  isDemoMode: false,
+  enableDebugLog: true,
   defaultPaymentProvider: 'creem' // 默认使用 Creem 支付
 };
 
 // 从环境变量获取配置（优先级更高）
-// 在浏览器环境中使用 import.meta.env
+// 注意：仅包含前端安全的配置项
 export const paymentConfig: PaymentConfig = {
+  // Z-Pay 配置（向后兼容）
   zpayPid: import.meta.env.ZPAY_PID || defaultPaymentConfig.zpayPid,
   zpayKey: import.meta.env.ZPAY_KEY || defaultPaymentConfig.zpayKey,
-  creemApiKey: import.meta.env.VITE_CREEM_API_KEY || defaultPaymentConfig.creemApiKey,
-  creemWebhookSecret: import.meta.env.VITE_CREEM_WEBHOOK_SECRET || defaultPaymentConfig.creemWebhookSecret,
+  
+  // 前端安全配置
   appUrl: import.meta.env.VITE_APP_URL || defaultPaymentConfig.appUrl,
   siteName: import.meta.env.VITE_SITE_NAME || defaultPaymentConfig.siteName,
-  // 优先使用默认配置，环境变量可以覆盖
   isDemoMode: import.meta.env.ZPAY_DEMO_MODE === 'true' ? true : defaultPaymentConfig.isDemoMode,
   enableDebugLog: import.meta.env.DEV === true,
   defaultPaymentProvider: (import.meta.env.VITE_PAYMENT_PROVIDER as 'zpay' | 'creem') || defaultPaymentConfig.defaultPaymentProvider
@@ -60,33 +53,22 @@ export function validatePaymentConfig(): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
   
   if (!paymentConfig.isDemoMode) {
-    // 根据默认支付提供商验证相应配置
-    if (paymentConfig.defaultPaymentProvider === 'zpay') {
-      // Z-Pay 配置验证
-      if (!paymentConfig.zpayPid || paymentConfig.zpayPid === 'demo_pid') {
-        errors.push('请配置真实的Z-Pay商户ID (ZPAY_PID)');
-      }
-      
-      if (!paymentConfig.zpayKey || paymentConfig.zpayKey === 'demo_key') {
-        errors.push('请配置真实的Z-Pay商户密钥 (ZPAY_KEY)');
-      }
-    } else if (paymentConfig.defaultPaymentProvider === 'creem') {
-      // Creem 配置验证
-      if (!paymentConfig.creemApiKey) {
-        errors.push('请配置 Creem API 密钥 (VITE_CREEM_API_KEY)');
-      }
-      
-      if (!paymentConfig.creemWebhookSecret) {
-        errors.push('请配置 Creem Webhook 密钥 (VITE_CREEM_WEBHOOK_SECRET)');
-      }
-      
-      if (paymentConfig.creemApiKey && !paymentConfig.creemApiKey.startsWith('creem_') && !paymentConfig.creemApiKey.startsWith('ck_')) {
-        errors.push('Creem API 密钥格式错误，应以 creem_ 、ck_test_ 或 ck_live_ 开头');
-      }
-    }
-    
+    // 基本配置验证
     if (!paymentConfig.appUrl.startsWith('https://') && !paymentConfig.appUrl.includes('localhost')) {
       errors.push('生产环境请使用HTTPS域名');
+    }
+    
+    // 支付提供商特定验证
+    if (paymentConfig.defaultPaymentProvider === 'zpay') {
+      if (!paymentConfig.zpayPid || paymentConfig.zpayPid === 'demo_pid') {
+        errors.push('请在后端配置真实的 Z-Pay 商户ID (ZPAY_PID)');
+      }
+      if (!paymentConfig.zpayKey || paymentConfig.zpayKey === 'demo_key') {
+        errors.push('请在后端配置真实的 Z-Pay 商户密钥 (ZPAY_KEY)');
+      }
+    } else if (paymentConfig.defaultPaymentProvider === 'creem') {
+      // Creem 的敏感配置在后端验证，前端只检查基本配置
+      console.info('✅ Creem 支付模式：API密钥和Webhook Secret在后端配置');
     }
   }
   
@@ -113,19 +95,20 @@ ${provider === 'zpay' ? `
 Z-Pay 配置:
 商户ID: ${paymentConfig.zpayPid}
 密钥状态: ${paymentConfig.zpayKey ? '✅ 已配置' : '❌ 未配置'}
+⚠️  建议将Z-Pay密钥迁移到后端环境变量
 ` : `
 Creem 配置:
-API 密钥: ${paymentConfig.creemApiKey ? (paymentConfig.creemApiKey.substring(0, 12) + '...') : '❌ 未配置'}
-Webhook 密钥: ${paymentConfig.creemWebhookSecret ? '✅ 已配置' : '❌ 未配置'}
+✅ API 密钥配置在后端 (CREEM_API_KEY)
+✅ Webhook Secret 配置在后端 (CREEM_WEBHOOK_SECRET)
+🔒 敏感信息不暴露在前端，安全！
 `}
 
 ${paymentConfig.isDemoMode ? `
 ⚠️  当前为演示模式，不会进行真实支付
 💡 要启用真实支付，请：
-1. 配置 ${provider === 'zpay' ? 'Z-Pay' : 'Creem'} 相关密钥
-2. 在 src/config/paymentConfig.ts 中更新配置
-3. 或设置相应的环境变量
-4. 设置 isDemoMode = false
+1. 在 Vercel 后端配置 ${provider === 'zpay' ? 'Z-Pay' : 'Creem'} 环境变量
+2. ${provider === 'creem' ? 'CREEM_API_KEY 和 CREEM_WEBHOOK_SECRET' : 'ZPAY_PID 和 ZPAY_KEY'}
+3. 设置 isDemoMode = false
 ` : `
 ✅ 真实支付模式已启用
 ${validation.valid ? '✅ 配置验证通过' : '❌ 配置验证失败:\n' + validation.errors.join('\n')}

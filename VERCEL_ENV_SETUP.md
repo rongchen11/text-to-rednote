@@ -1,34 +1,58 @@
 # Vercel 环境变量配置指南
 
+## 🔒 安全最佳实践（必读！）
+
+### ⚠️ 重要安全规则
+
+**前缀的含义**：
+- `VITE_` 或 `NEXT_PUBLIC_` 前缀：变量会**暴露在前端浏览器代码**中，任何访问网站的人都能看到
+- **无前缀**：变量只在后端使用，对外不可见
+
+**绝对不能暴露的敏感信息**：
+- ❌ API 密钥（Secret Keys）
+- ❌ Webhook Secrets
+- ❌ 数据库 Service Role Keys
+- ❌ 任何用于验证身份的私密令牌
+
+**可以安全暴露的信息**：
+- ✅ 公开 URL（如网站地址）
+- ✅ 公开 API Keys（Publishable Keys，通常以 `pk_` 开头）
+- ✅ 网站名称、主题配置等
+
+### 🚨 Vercel 警告图标说明
+
+如果你在 Vercel 环境变量设置中看到黄色 ⚠️ 图标，说明该变量会暴露到前端。
+- 如果是敏感信息（API密钥、Secret等）：**立即移除 `VITE_` 或 `NEXT_PUBLIC_` 前缀**
+- 如果是公开信息（URL、网站名称等）：可以安全使用
+
+---
+
 ## 🔧 必须在 Vercel 设置的环境变量
 
 访问：https://vercel.com/你的项目/settings/environment-variables
 
-### 1️⃣ Creem 支付配置（必需）
+### 1️⃣ Creem 支付配置（必需 - 后端专用）
+
+⚠️ **重要安全提示**：
+- **不要**在变量名前加 `VITE_` 或 `NEXT_PUBLIC_` 前缀
+- 这些是敏感信息，只应在后端使用
+- 添加前缀会将密钥暴露到前端浏览器代码中！
 
 ```bash
-# Creem API Key
+# ✅ 正确：后端专用配置（无 VITE_ 前缀）
 CREEM_API_KEY=creem_45FM6wm1YDgdhQ5hREjm6n
-
-# Creem Webhook Secret
 CREEM_WEBHOOK_SECRET=whsec_7XF3M66MEt4L3q2GmCdfYB
-
-# 前端 Creem 配置
-VITE_CREEM_API_KEY=creem_45FM6wm1YDgdhQ5hREjm6n
-VITE_CREEM_WEBHOOK_SECRET=whsec_7XF3M66MEt4L3q2GmCdfYB
 ```
 
-### 2️⃣ 支付提供商配置（必需）
+### 2️⃣ 应用配置（必需 - 前端安全配置）
+
+✅ **这些配置可以安全地暴露在前端**：
 
 ```bash
-# 使用 Creem 作为默认支付提供商
+# 支付提供商选择
 VITE_PAYMENT_PROVIDER=creem
-```
 
-### 3️⃣ 应用配置（必需）
-
-```bash
-# 应用 URL（用于支付回调）
+# 应用 URL（用于支付回调和前端路由）
 VITE_APP_URL=https://www.rednotewriter.com
 NEXT_PUBLIC_APP_URL=https://www.rednotewriter.com
 
@@ -36,24 +60,25 @@ NEXT_PUBLIC_APP_URL=https://www.rednotewriter.com
 VITE_SITE_NAME=文字转RedNote
 ```
 
-### 4️⃣ Supabase 配置（必需 - 用于用户认证和积分管理）
+### 3️⃣ Supabase 配置（必需 - 用于用户认证和积分管理）
 
 ```bash
-# Supabase URL
+# Supabase URL（可以暴露在前端）
 NEXT_PUBLIC_SUPABASE_URL=你的_supabase_url
 VITE_SUPABASE_URL=你的_supabase_url
 
-# Supabase Anon Key（公开密钥）
+# Supabase Anon Key（公开密钥 - 安全）
 NEXT_PUBLIC_SUPABASE_ANON_KEY=你的_anon_key
 VITE_SUPABASE_ANON_KEY=你的_anon_key
 
-# Supabase Service Role Key（服务端密钥 - 敏感！）
+# ⚠️ Supabase Service Role Key（服务端密钥 - 敏感！不要加 VITE_ 或 NEXT_PUBLIC_ 前缀）
 SUPABASE_SERVICE_ROLE_KEY=你的_service_role_key
 ```
 
-### 5️⃣ 豆包 API 配置（可选 - 用于图片生成）
+### 4️⃣ 豆包 API 配置（可选 - 用于图片生成）
 
 ```bash
+# 豆包 API 密钥（如果是私钥，建议在后端使用）
 VITE_DOUBAO_API_KEY=你的_doubao_api_key
 ```
 

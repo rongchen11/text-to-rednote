@@ -169,10 +169,15 @@ const CreemPaymentDemo: React.FC = () => {
             <div>
               <Title level={4}>配置步骤</Title>
               <ol>
-                <li>获取 Creem API 密钥和 Webhook 密钥</li>
-                <li>配置环境变量 <code>VITE_CREEM_API_KEY</code> 和 <code>VITE_CREEM_WEBHOOK_SECRET</code></li>
-                <li>设置 <code>VITE_PAYMENT_PROVIDER=creem</code></li>
-                <li>配置 Webhook 端点：<code>/api/payment/creem-webhook</code></li>
+                <li>获取 Creem API 密钥和 Webhook Secret</li>
+                <li>在 Vercel <strong>后端</strong>配置环境变量：
+                  <ul>
+                    <li><code>CREEM_API_KEY</code>（⚠️ 无 VITE_ 前缀）</li>
+                    <li><code>CREEM_WEBHOOK_SECRET</code>（⚠️ 无 VITE_ 前缀）</li>
+                  </ul>
+                </li>
+                <li>在前端配置 <code>VITE_PAYMENT_PROVIDER=creem</code></li>
+                <li>在 Creem Dashboard 配置 Webhook URL：<code>https://你的域名/api/payment/creem-webhook</code></li>
               </ol>
             </div>
 

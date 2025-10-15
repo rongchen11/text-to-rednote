@@ -49,13 +49,7 @@ export const CreemPaymentButton: React.FC<CreemPaymentButtonProps> = ({
         return;
       }
 
-      // 检查 Creem 配置
-      const apiKey = paymentConfig.creemApiKey || 'creem_45FM6wm1YDgdhQ5hREjm6n';
-      if (!apiKey) {
-        message.error('Creem 支付尚未配置，请联系管理员');
-        return;
-      }
-
+      // Creem API 密钥在后端配置，前端无需检查
       setLoading(true);
       onPaymentStart?.();
 

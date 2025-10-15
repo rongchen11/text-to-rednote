@@ -57,23 +57,28 @@
 
 ## 🚀 部署清单
 
-### 1. 环境变量设置
-在您的服务器上设置以下环境变量：
+### 1. 环境变量设置（已修复安全问题 ✅）
+
+⚠️ **重要安全更新**：已移除前端敏感变量，仅在后端使用
+
+在 Vercel 设置以下环境变量：
 
 ```bash
-# Creem 配置
-VITE_CREEM_API_KEY=creem_45FM6wm1YDgdhQ5hREjm6n
+# ✅ 后端专用配置（无 VITE_ 前缀 - 安全！）
 CREEM_API_KEY=creem_45FM6wm1YDgdhQ5hREjm6n
-
-# Webhook 密钥（已配置）
-VITE_CREEM_WEBHOOK_SECRET=whsec_7XF3M66MEt4L3q2GmCdfYB
 CREEM_WEBHOOK_SECRET=whsec_7XF3M66MEt4L3q2GmCdfYB
 
-# 应用配置
+# ✅ 前端安全配置（可以有 VITE_ 前缀）
 VITE_APP_URL=https://www.rednotewriter.com
 NEXT_PUBLIC_APP_URL=https://www.rednotewriter.com
 VITE_PAYMENT_PROVIDER=creem
 ```
+
+**安全改进说明**：
+- ❌ 已移除 `VITE_CREEM_API_KEY` - API密钥不应暴露在前端
+- ❌ 已移除 `VITE_CREEM_WEBHOOK_SECRET` - Webhook Secret绝对不能暴露
+- ✅ 敏感信息只在后端 API routes 中使用
+- ✅ 前端通过后端 API 进行支付请求，无需直接访问敏感密钥
 
 ### 2. Creem 控制台配置
 在 Creem Dashboard (https://dashboard.creem.io) 中配置：
