@@ -205,20 +205,16 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({
               }
             </Button>
           ) : (
-            <UnifiedPaymentButton
-              productId={option.product_id}
-              productName={option.label}
-              amount={option.price}
-              credits={totalCredits}
-              paymentType="card"
+            <Button
               type={option.popular ? 'primary' : 'default'}
               size="large"
               className="w-full"
-              disabled={!!loading}
-              onPaymentStart={handlePaymentStart}
-              onPaymentSuccess={handlePaymentSuccess}
-              onPaymentError={handlePaymentError}
-            />
+              disabled={!!loading || !option.product_id}
+              onClick={() => handlePayment(option)}
+              loading={loading === option.id}
+            >
+              {option.price === 5 ? `Pay $${option.price} - Get ${option.credits} Credits` : 'Upgrade to Premium'}
+            </Button>
           )}
         </div>
       </Card>
