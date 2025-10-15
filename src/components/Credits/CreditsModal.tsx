@@ -22,7 +22,7 @@ const PURCHASE_OPTIONS = [
     popular: false,
     description: 'Perfect for getting started',
     isFree: true,
-    product_id: null, // 免费积分不使用 Creem
+    product_id: undefined, // 免费积分不使用 Creem
   },
   {
     id: 'standard_pack',
@@ -166,11 +166,6 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({
             <div className="text-lg font-semibold text-blue-600">
               💎 {option.isUnlimited ? '∞ Unlimited Credits' : `${option.credits.toLocaleString()} credits`}
             </div>
-            {option.bonus && !option.isUnlimited && (
-              <div className="text-sm text-green-600 mt-1">
-                + Bonus {option.bonus} credits
-              </div>
-            )}
             {!option.isUnlimited && (
               <div className="text-xs text-gray-500 mt-1">
                 Total: {totalCredits.toLocaleString()} credits
@@ -291,7 +286,7 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({
             </div>
             <div className="text-center p-3 bg-gray-50 rounded-lg">
               <div className="text-lg font-bold text-blue-600">Pay as You Go</div>
-              <div className="text-sm text-gray-600">$5 for 550 credits + bonus</div>
+              <div className="text-sm text-gray-600">$5 for 100 credits</div>
             </div>
             <div className="text-center p-3 bg-gray-50 rounded-lg">
               <div className="text-lg font-bold text-purple-600">Unlimited Access</div>
