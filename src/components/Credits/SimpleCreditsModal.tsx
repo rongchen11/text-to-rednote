@@ -50,18 +50,11 @@ export const SimpleCreditsModal: React.FC<SimpleCreditsModalProps> = ({
     try {
       setLoading(option.id);
       
-      // 直接跳转到 Creem 支付页面
-      const baseUrl = 'https://creem.io/checkout';
-      const params = new URLSearchParams({
-        product_id: option.product_id,
-        customer_email: user.email || '',
-        success_url: `${window.location.origin}/payment/success`,
-        cancel_url: window.location.origin
-      });
+      // 使用 Creem 产品购买链接
+      // 格式：https://buy.creem.io/product/{product_id}
+      const checkoutUrl = `https://buy.creem.io/product/${option.product_id}`;
       
-      const checkoutUrl = `${baseUrl}?${params.toString()}`;
-      
-      message.info('Redirecting to payment page...');
+      message.info('Opening payment page...');
       
       // 在新窗口打开支付页面
       window.open(checkoutUrl, '_blank');
