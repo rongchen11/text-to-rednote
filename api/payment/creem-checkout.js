@@ -77,14 +77,11 @@ export default async function handler(req, res) {
     // 构建 Creem API 请求 - 根据官方文档
     const checkoutData = {
       product_id: product_id,
-      mode: 'payment',  // 指定为直接支付模式
-      payment_method_types: ['card'],  // 明确指定使用信用卡支付
-      customer_email: customer_email,  // 直接传递邮箱，不用 customer 对象
       success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.rednotewriter.com'}/payment/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.rednotewriter.com'}`,
       metadata: {
         credits: product.credits.toString(),
         product_name: product.name,
+        user_email: customer_email,
         ...metadata
       }
     };
