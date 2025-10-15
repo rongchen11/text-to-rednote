@@ -11,7 +11,7 @@ interface SimpleCreditsModalProps {
   onClose: () => void;
 }
 
-// 简化的购买选项
+// 简化的购买选项 - 使用 Creem 直接支付链接
 const PURCHASE_OPTIONS = [
   {
     id: 'basic',
@@ -20,6 +20,7 @@ const PURCHASE_OPTIONS = [
     label: 'Standard',
     description: 'Great for getting started',
     product_id: 'prod_6vVTmdcL0l4O0D28hZk25L',
+    payment_link: 'https://www.creem.io/payment/prod_6vVTmdcL0l4O0D28hZk25L',
     popular: true
   },
   {
@@ -29,6 +30,7 @@ const PURCHASE_OPTIONS = [
     label: 'Unlimited',
     description: 'One-time purchase, unlimited access',
     product_id: 'prod_5okTWJRCBjkApBlR7pEUnh',
+    payment_link: 'https://www.creem.io/payment/prod_5okTWJRCBjkApBlR7pEUnh',
     popular: false
   }
 ];
@@ -50,9 +52,23 @@ export const SimpleCreditsModal: React.FC<SimpleCreditsModalProps> = ({
     try {
       setLoading(option.id);
       
-      message.info('Creating payment session...');
+      message.info('Redirecting to payment page...');
       
-      // 调用后端 API 创建 Creem checkout session
+      // 直接跳转到 Creem 支付链接
+      if (option.payment_link) {
+        // 添加用户信息到 URL 参数
+        const paymentUrl = new URL(option.payment_link);
+        paymentUrl.searchParams.set('customer_email', user.email);
+        paymentUrl.searchParams.set('client_reference_id', user.id);
+        
+        console.log('✅ Redirecting to Creem payment:', paymentUrl.toString());
+        
+        // 跳转到 Creem 支付页面
+        window.location.href = paymentUrl.toString();
+        return;
+      }
+
+      // 备用方案：通过后端 API 创建 checkout session
       const response = await fetch('/api/payment/creem-checkout', {
         method: 'POST',
         headers: {
@@ -80,8 +96,6 @@ export const SimpleCreditsModal: React.FC<SimpleCreditsModalProps> = ({
       }
 
       console.log('✅ Checkout session created:', result);
-      
-      message.success('Redirecting to payment page...');
       
       // 跳转到 Creem 提供的 checkout_url
       window.location.href = result.checkout_url;
