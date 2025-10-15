@@ -159,7 +159,7 @@ export const SimpleCreditsModal: React.FC<SimpleCreditsModalProps> = ({
                     border: option.popular ? 'none' : undefined,
                   }}
                 >
-                  {option.price === 599 ? 'Upgrade to Premium' : `Pay $${option.price} - Get ${option.credits} Credits`}
+                  {option.price === 599 ? 'Upgrade to Ultimate' : 'Upgrade to Premium'}
                 </Button>
               </div>
             </Card>
